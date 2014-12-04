@@ -65,6 +65,10 @@ function islandora_cwrc_writer_menu() {
       'type' => MENU_CALLBACK,
       'access callback' => TRUE,
     ),
+    // We don't use menu loading or access callbacks for the given PIDs as all
+    // of these paths are expected to return JSON, so if they failed during the
+    // menu load callback or access callback Drupal would return html, and mess
+    // with what the CWRC-Writer is expecting.
     'cwrc/editor/documents/%' => array(
       'page callback' => 'islandora_cwrc_writer_document',
       'page arguments' => array(3),
