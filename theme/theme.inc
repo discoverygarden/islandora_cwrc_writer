@@ -1,4 +1,4 @@
-<?php
+template_preprocess_islandora_cwrc_writer<?php
 
 /**
  * @file
@@ -16,7 +16,7 @@ function theme_islandora_cwrc_writer_embedded(array $variables) {
 }
 
 /**
- * Implements template_preprocess_islandora_cwrc_writer().
+ * Implements template_preprocess_islandora_cwrc_writer_iframe().
  */
 function template_preprocess_islandora_cwrc_writer_iframe(array &$variables) {
   // Show the content in full screen.
@@ -39,7 +39,7 @@ function template_preprocess_islandora_cwrc_writer_iframe(array &$variables) {
 }
 
 /**
- * Implements template_preprocess_islandora_cwrc_writer().
+ * Implements template_process_islandora_cwrc_writer_iframe().
  */
 function template_process_islandora_cwrc_writer_iframe(array &$variables) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
@@ -171,7 +171,7 @@ function template_preprocess_islandora_cwrc_writer_note(array &$variables) {
 }
 
 /**
- * Implements template_preprocess_theme().
+ * Implements template_preprocess_islandora_cwrc_writer__image_annotation().
  */
 function template_preprocess_islandora_cwrc_writer__image_annotation(array &$variables) {
   islandora_cwrc_record_new_resources_to_flag();
@@ -285,7 +285,7 @@ function template_preprocess_islandora_cwrc_writer__image_annotation(array &$var
 }
 
 /**
- * Implements template_process_theme().
+ * Implements template_process_islandora_cwrc_writer__image_annotation().
  */
 function template_process_islandora_cwrc_writer__image_annotation(array &$variables) {
   islandora_cwrc_record_new_resources_to_flag();
@@ -316,7 +316,7 @@ function template_process_islandora_cwrc_writer__image_annotation(array &$variab
 }
 
 /**
- * Implements template_preprocess_theme().
+ * Implements template_preprocess_islandora_cwrc_writer__audio().
  */
 function template_preprocess_islandora_cwrc_writer__audio(array &$variables) {
   islandora_cwrc_record_new_resources_to_flag();
@@ -359,7 +359,7 @@ function template_preprocess_islandora_cwrc_writer__audio(array &$variables) {
 }
 
 /**
- * Implements template_preprocess_theme().
+ * Implements template_preprocess_islandora_cwrc_writer__video().
  */
 function template_preprocess_islandora_cwrc_writer__video(array &$variables) {
   islandora_cwrc_record_new_resources_to_flag();
