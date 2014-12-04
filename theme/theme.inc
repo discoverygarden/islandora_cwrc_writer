@@ -98,39 +98,8 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
   drupal_add_js("$module_path/js/islandora_cwrc_writer.js");
   drupal_add_css("$module_path/css/islandora_cwrc_writer.base.css");
   islandora_cwrc_flag_recorded_resources();
-  // Make sure we use the proper template / preprocess / process functions if
-  // any sources are provided.
-  if (!empty($variables['sources'])) {
-    // We assume all source objects have the same type and only check the first.
-    $jwplayer_enabled = module_exists('islandora_jwplayer');
-    $image_annotation_enabled = module_exists('islandora_image_annotation');
-    $source = islandora_object_load(reset($variables['sources']));
-    $is_audio_source = in_array('islandora:sp-audioCModel', $source->models);
-    $is_video_source = in_array('islandora:sp_videoCModel', $source->models);
-    if ($is_audio_source && $jwplayer_enabled) {
-      $variables['theme_hook_suggestion'] = 'islandora_cwrc_writer__audio';
-    }
-    elseif ($is_video_source && $jwplayer_enabled) {
-      $variables['theme_hook_suggestion'] = 'islandora_cwrc_writer__video';
-    }
-    elseif ($image_annotation_enabled) {
-      $mappings = variable_get('islandora_annotation_mappings', array());
-      foreach ($source->models as $model) {
-        if (isset($mappings[$model])) {
-          $variables['theme_hook_suggestion'] = 'islandora_cwrc_writer__image_annotation';
-          break;
-        }
-      }
-    }
-  }
-  // Drupal doesn't support dynamically adding template preprocess functions
-  // based on the hook suggestion so we have to call them manually here.
-  if (isset($variables['theme_hook_suggestion'])) {
-    $processor_function = 'template_preprocess_' . $variables['theme_hook_suggestion'];
-    if (function_exists($processor_function)) {
-      $processor_function($variables);
-    }
-  }
+  // The Widgets should be preprocessed last.
+  islandora_cwrc_writer_preprocess_source_widget($variables);
 }
 
 /**
@@ -145,180 +114,42 @@ function template_process_islandora_cwrc_writer(array &$variables) {
   if (isset($variables['eastern_panel']) && !is_string($variables['eastern_panel'])) {
     $variables['eastern_panel'] = drupal_render($variables['eastern_panel']);
   }
-  // Drupal doesn't support dynamically adding template process functions
-  // based on the hook suggestion so we have to call it manually here. Bit of a
-  // hack but not much in the way of nicer alternatives.
-  if (isset($variables['theme_hook_suggestion'])) {
-    $processor_function = 'template_process_' . $variables['theme_hook_suggestion'];
-    if (function_exists($processor_function)) {
-      $processor_function($variables);
+}
+
+/**
+ * Based on the source type preprocess a widget for displaying it.
+ */
+function islandora_cwrc_writer_preprocess_source_widget(array &$variables) {
+  if (empty($variables['sources'])) {
+    return;
+  }
+  // We assume all source objects have the same type and only check the first.
+  $jwplayer_enabled = module_exists('islandora_jwplayer');
+  $image_annotation_enabled = module_exists('islandora_image_annotation');
+  $source = islandora_object_load(reset($variables['sources']));
+  $is_audio_source = in_array('islandora:sp-audioCModel', $source->models);
+  $is_video_source = in_array('islandora:sp_videoCModel', $source->models);
+  if ($is_audio_source && $jwplayer_enabled) {
+    islandora_cwrc_writer_preprocess_audio_widget($variables);
+  }
+  elseif ($is_video_source && $jwplayer_enabled) {
+    islandora_cwrc_writer_preprocess_video_widget($variables);
+  }
+  elseif ($image_annotation_enabled) {
+    $mappings = variable_get('islandora_annotation_mappings', array());
+    foreach ($source->models as $model) {
+      if (isset($mappings[$model])) {
+        islandora_cwrc_writer_preprocess_image_annotation_widget($variables);
+        break;
+      }
     }
   }
 }
 
 /**
- * Implements template_preprocess_islandora_cwrc_writer_note().
+ * Preprocess the theme variables to show audio source content.
  */
-function template_preprocess_islandora_cwrc_writer_note(array &$variables) {
-  islandora_cwrc_record_new_resources_to_flag();
-  // Load the CWRC-Writer.
-  libraries_load(ISLANDORA_CWRC_WRITER_LIB);
-  $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
-  // Override CWRC-Writer Settings / startup behaviour.
-  drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
-  drupal_add_js("$module_path/js/islandora_cwrc_writer_note.js");
-  islandora_cwrc_flag_recorded_resources();
-}
-
-/**
- * Implements template_preprocess_islandora_cwrc_writer__image_annotation().
- */
-function template_preprocess_islandora_cwrc_writer__image_annotation(array &$variables) {
-  islandora_cwrc_record_new_resources_to_flag();
-  $object = islandora_object_load(reset($variables['sources']));
-  // Set preprocessor variables, for use in JavaScript.
-  $variables['dialog_box'] = array(
-    '#theme' => 'islandora_image_annotation_dialog',
-    '#object' => $object,
-  );
-  // Requires the jQuery UI Accordion Widget.
-  drupal_add_library('system', 'ui.accordion');
-  $variables['text_image_link_dialog_box'] = array(
-    '#theme' => 'islandora_image_annotation_dialog__text_image_link',
-    '#object' => $object,
-  );
-  $variables['text_image_link_button'] = array(
-    '#theme' => 'islandora_cwrc_writer_text_image_link_button',
-  );
-  // The canvas is where the image and it's annotations get rendered.
-  $variables['canvas'] = array(
-    '#theme' => 'islandora_image_annotation_canvas',
-    '#object' => $object,
-  );
-  $variables['logo'] = array(
-    '#theme' => 'islandora_image_annotation_shared_canvas_logo',
-  );
-  // Add the tab for image annotations.
-  $variables['western_tabs']['#links']['image_annotations'] = array(
-    'title' => t('Image Annotations'),
-    'fragment' => 'image-annotations',
-    'href' => '',
-    'external' => TRUE,
-  );
-  // Add the tab for image annotations.
-  $variables['western_tabs_content'] = array(
-    '#prefix' => '<div id="image-annotations" class="tabWithLayout">',
-    '#theme' => 'islandora_image_annotation_list',
-    '#object' => $object,
-    '#suffix' => '</div>',
-  );
-  // Drupal Settings.
-  $settings = array(
-    'pid' => $object->id,
-  );
-  drupal_add_js(array('islandoraImageAnnotation' => $settings), 'setting');
-  // Include required Javascript libraries.
-  $image_annotation_module_path = drupal_get_path('module', 'islandora_image_annotation');
-  drupal_add_js("$image_annotation_module_path/lib/jquery/ContextMenu/jquery.contextMenu.js");
-  drupal_add_js("$image_annotation_module_path/lib/jquery/miniColors/jquery.miniColors.js");
-  drupal_add_js("$image_annotation_module_path/lib/jquery/jquery.rdfquery.rdfa.min-1.1.js");
-  drupal_add_js("$image_annotation_module_path/lib/raphael/raphael.js");
-  drupal_add_js("$image_annotation_module_path/lib/raphael/scale.raphael.js");
-  drupal_add_js("$image_annotation_module_path/lib/uuid.js");
-  drupal_add_js("$image_annotation_module_path/lib/he.js");
-  drupal_add_js("$image_annotation_module_path/js/islandora_image_annotation_utils.js");
-  drupal_add_js("$image_annotation_module_path/js/rdf.js");
-  drupal_add_js("$image_annotation_module_path/js/islandora_image_annotation.js");
-  drupal_add_js("$image_annotation_module_path/js/islandora_image_annotation_buttons.js");
-  drupal_add_css("$image_annotation_module_path/lib/jquery/ContextMenu/jquery.contextMenu.css");
-  drupal_add_css("$image_annotation_module_path/lib/jquery/miniColors/jquery.miniColors.css");
-  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.base.css");
-  // And our own customizations.
-  $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
-  drupal_add_js("$module_path/js/islandora_cwrc_writer_image_annotation.js");
-  drupal_add_js("$module_path/js/islandora_cwrc_writer_image_annotation_dialog.js");
-  drupal_add_css("$module_path/css/islandora_cwrc_writer.image_annotation.css");
-  // To allow for use to dynamically change the image annotation with out doing
-  // a page refresh.
-  module_load_include('inc', 'islandora_image_annotation', 'includes/utils');
-  $settings = array(
-    'documents' => $variables['documents'],
-    'sources' => $variables['sources'],
-  );
-  foreach ($variables['sources'] as $source) {
-    // Not really ideal to load all the objects as once, but we'll see what we
-    // can do to optimize this later when it becomes a problem.
-    $source = islandora_object_load($source);
-    $settings[$source->id] = array(
-      'islandoraImageAnnotation' => array(
-        'pid' => $source->id,
-      ),
-      'islandoraImageAnnotationDialog' => array(
-        'pid' => $source->id,
-        'categories' => islandora_image_annotation_get_categories($source),
-        'enforceTaxonomy' => variable_get('islandora_annotation_enforce_taxonomy', TRUE),
-        'allowEntityLinking' => variable_get('islandora_image_annotation_use_entity_tagging', TRUE),
-        'useTitleVocabulary' => variable_get('islandora_image_annotation_use_title_vocabulary', FALSE),
-        'strokeWidths' => variable_get('islandora_image_annotation_stroke_width', '.3 .6 .9 1.2 1.5'),
-        'canChooseColour' => !variable_get('islandora_annotation_optimized', TRUE),
-        'dialog' => array(
-          'dialogClass' => 'islandora-image-annotation',
-        ),
-      ),
-      'islandoraImageAnnotationList' => array(
-        'pid' => $source->id,
-        'editable' => user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE),
-        'annotations' => islandora_image_annotation_get_annotations($source),
-      ),
-    );
-  }
-  drupal_add_js(array('islandoraCWRCWriterImageAnnotation' => $settings), 'setting');
-  drupal_add_js("$module_path/js/islandora_cwrc_writer_image_annotation_hack_settings.js", array(
-    'type' => 'file',
-    // We can't access the fragment identifier server side, and it's used by the
-    // CWRC-Writer to select the current document. So we hack the settings of
-    // the Image Annotation Module, before Drupal.attachBehaviours() runs, aka
-    // before jQuery.ready() is called.
-    'weight' => 100,
-  ));
-  islandora_cwrc_flag_recorded_resources();
-}
-
-/**
- * Implements template_process_islandora_cwrc_writer__image_annotation().
- */
-function template_process_islandora_cwrc_writer__image_annotation(array &$variables) {
-  islandora_cwrc_record_new_resources_to_flag();
-  $image_annotation_module_path = drupal_get_path('module', 'islandora_image_annotation');
-  // All dialog's follow this format to get the CSS to work out.
-  $variables['dialog_box'] = drupal_render($variables['dialog_box']);
-  $variables['text_image_link_dialog_box'] = drupal_render($variables['text_image_link_dialog_box']);
-  $variables['text_image_link_button'] = drupal_render($variables['text_image_link_button']);
-  $variables['canvas'] = drupal_render($variables['canvas']);
-  $variables['logo'] = drupal_render($variables['logo']);
-  // Change the dialog class so the boxes look correct.
-  drupal_add_js(array(
-    'islandoraImageAnnotationDialog' => array(
-      'dialog' => array(
-        'dialogClass' => 'splitButtons',
-        'position' => array(
-          'my' => "left top",
-          'at' => "left top",
-          'of' => '#cwrc_wrapper',
-        ),
-      ),
-    )), 'setting');
-  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.dialog.css");
-  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.list.css");
-  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.canvas.css");
-  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.logo.css");
-  islandora_cwrc_flag_recorded_resources();
-}
-
-/**
- * Implements template_preprocess_islandora_cwrc_writer__audio().
- */
-function template_preprocess_islandora_cwrc_writer__audio(array &$variables) {
+function islandora_cwrc_writer_preprocess_audio_widget(array &$variables) {
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
   if (!isset($object['PROXY_MP3']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object['PROXY_MP3'])) {
@@ -359,9 +190,9 @@ function template_preprocess_islandora_cwrc_writer__audio(array &$variables) {
 }
 
 /**
- * Implements template_preprocess_islandora_cwrc_writer__video().
+ * Preprocess the theme variables to show video source content.
  */
-function template_preprocess_islandora_cwrc_writer__video(array &$variables) {
+function islandora_cwrc_writer_preprocess_video_widget(array &$variables) {
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
   $viewer_dsid = (stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE) ? 'OGG' : 'MP4';
@@ -389,6 +220,176 @@ function template_preprocess_islandora_cwrc_writer__video(array &$variables) {
 }
 
 /**
+ * Preprocess the theme variables to show the image annotation widget.
+ */
+function islandora_cwrc_writer_preprocess_image_annotation_widget(array &$variables) {
+  $object = islandora_object_load(reset($variables['sources']));
+  // Add the tab for image annotations.
+  $variables['western_tabs']['#links']['image_annotations'] = array(
+    'title' => t('Image Annotations'),
+    'fragment' => 'image-annotations',
+    'href' => '',
+    'external' => TRUE,
+  );
+  // Add the tab for image annotations.
+  $variables['western_tabs_content'] = array(
+    '#prefix' => '<div id="image-annotations" class="tabWithLayout">',
+    '#theme' => 'islandora_image_annotation_list',
+    '#object' => $object,
+    '#suffix' => '</div>',
+  );
+  // Add image annotation widget.
+  $variables['eastern_panel'] = array(
+    '#theme' => 'islandora_cwrc_writer_image_annotation',
+    '#documents' => $variables['documents'],
+    '#sources' => $variables['sources'],
+  );
+}
+
+/**
+ * Implements template_preprocess_islandora_cwrc_writer_note().
+ */
+function template_preprocess_islandora_cwrc_writer_note(array &$variables) {
+  islandora_cwrc_record_new_resources_to_flag();
+  // Load the CWRC-Writer.
+  libraries_load(ISLANDORA_CWRC_WRITER_LIB);
+  $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
+  // Override CWRC-Writer Settings / startup behaviour.
+  drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
+  drupal_add_js("$module_path/js/islandora_cwrc_writer_note.js");
+  islandora_cwrc_flag_recorded_resources();
+}
+
+/**
+ * Implements template_preprocess_islandora_cwrc_writer_image_annotation().
+ */
+function template_preprocess_islandora_cwrc_writer_image_annotation(array &$variables) {
+  islandora_cwrc_record_new_resources_to_flag();
+  $object = islandora_object_load(reset($variables['sources']));
+  // Set preprocessor variables, for use in JavaScript.
+  $variables['dialog_box'] = array(
+    '#theme' => 'islandora_image_annotation_dialog',
+    '#object' => $object,
+  );
+  // Requires the jQuery UI Accordion Widget.
+  drupal_add_library('system', 'ui.accordion');
+  $variables['text_image_link_dialog_box'] = array(
+    '#theme' => 'islandora_cwrc_writer_text_image_link_dialog',
+    '#object' => $object,
+  );
+  $variables['text_image_link_button'] = array(
+    '#theme' => 'islandora_cwrc_writer_text_image_link_button',
+  );
+  // The canvas is where the image and it's annotations get rendered.
+  $variables['canvas'] = array(
+    '#theme' => 'islandora_image_annotation_canvas',
+    '#object' => $object,
+  );
+  $variables['logo'] = array(
+    '#theme' => 'islandora_image_annotation_shared_canvas_logo',
+  );
+  // Drupal Settings.
+  $settings = array(
+    'pid' => $object->id,
+  );
+  drupal_add_js(array('islandoraImageAnnotation' => $settings), 'setting');
+  // Include required Javascript libraries.
+  $image_annotation_module_path = drupal_get_path('module', 'islandora_image_annotation');
+  drupal_add_js("$image_annotation_module_path/lib/jquery/ContextMenu/jquery.contextMenu.js");
+  drupal_add_js("$image_annotation_module_path/lib/jquery/miniColors/jquery.miniColors.js");
+  drupal_add_js("$image_annotation_module_path/lib/jquery/jquery.rdfquery.rdfa.min-1.1.js");
+  drupal_add_js("$image_annotation_module_path/lib/raphael/raphael.js");
+  drupal_add_js("$image_annotation_module_path/lib/raphael/scale.raphael.js");
+  drupal_add_js("$image_annotation_module_path/lib/uuid.js");
+  drupal_add_js("$image_annotation_module_path/lib/he.js");
+  drupal_add_js("$image_annotation_module_path/js/islandora_image_annotation_utils.js");
+  drupal_add_js("$image_annotation_module_path/js/rdf.js");
+  drupal_add_js("$image_annotation_module_path/js/islandora_image_annotation.js");
+  drupal_add_js("$image_annotation_module_path/js/islandora_image_annotation_buttons.js");
+  drupal_add_css("$image_annotation_module_path/lib/jquery/ContextMenu/jquery.contextMenu.css");
+  drupal_add_css("$image_annotation_module_path/lib/jquery/miniColors/jquery.miniColors.css");
+  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.base.css");
+  // And our own customizations.
+  $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
+  drupal_add_js("$module_path/js/islandora_cwrc_writer_image_annotation.js");
+  drupal_add_js("$module_path/js/islandora_cwrc_writer_image_annotation_dialog.js");
+  drupal_add_css("$module_path/css/islandora_cwrc_writer.image_annotation.css");
+  // To allow for use to dynamically change the image annotation with out doing
+  // a page refresh.
+  module_load_include('inc', 'islandora_image_annotation', 'includes/utils');
+  $settings = array(
+    'documents' => $variables['documents'],
+    'sources' => $variables['sources'],
+  );
+  foreach ($variables['sources'] as $source) {
+    $source = islandora_object_load($source);
+    $settings[$source->id] = array(
+      'islandoraImageAnnotation' => array(
+        'pid' => $source->id,
+      ),
+      'islandoraImageAnnotationDialog' => array(
+        'pid' => $source->id,
+        'categories' => islandora_image_annotation_get_categories($source),
+        'enforceTaxonomy' => variable_get('islandora_annotation_enforce_taxonomy', TRUE),
+        'allowEntityLinking' => variable_get('islandora_image_annotation_use_entity_tagging', TRUE),
+        'useTitleVocabulary' => variable_get('islandora_image_annotation_use_title_vocabulary', FALSE),
+        'strokeWidths' => variable_get('islandora_image_annotation_stroke_width', '.3 .6 .9 1.2 1.5'),
+        'canChooseColour' => !variable_get('islandora_annotation_optimized', TRUE),
+        'dialog' => array(
+          'dialogClass' => 'islandora-image-annotation',
+        ),
+      ),
+      'islandoraImageAnnotationList' => array(
+        'pid' => $source->id,
+        'editable' => user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE),
+        'annotations' => islandora_image_annotation_get_annotations($source),
+      ),
+    );
+  }
+  drupal_add_js(array('islandoraCWRCWriterImageAnnotation' => $settings), 'setting');
+  drupal_add_js("$module_path/js/islandora_cwrc_writer_image_annotation_hack_settings.js", array(
+    'type' => 'file',
+    // We can't access the fragment identifier server side, and it's used by the
+    // CWRC-Writer to select the current document. So we hack the settings of
+    // the Image Annotation Module, before Drupal.attachBehaviours() runs, aka
+    // before jQuery.ready() is called.
+    'weight' => 100,
+  ));
+  islandora_cwrc_flag_recorded_resources();
+}
+
+/**
+ * Implements template_process_islandora_cwrc_writer_image_annotation().
+ */
+function template_process_islandora_cwrc_writer_image_annotation(array &$variables) {
+  islandora_cwrc_record_new_resources_to_flag();
+  $image_annotation_module_path = drupal_get_path('module', 'islandora_image_annotation');
+  // All dialog's follow this format to get the CSS to work out.
+  $variables['dialog_box'] = drupal_render($variables['dialog_box']);
+  $variables['text_image_link_dialog_box'] = drupal_render($variables['text_image_link_dialog_box']);
+  $variables['text_image_link_button'] = drupal_render($variables['text_image_link_button']);
+  $variables['canvas'] = drupal_render($variables['canvas']);
+  $variables['logo'] = drupal_render($variables['logo']);
+  // Change the dialog class so the boxes look correct.
+  drupal_add_js(array(
+    'islandoraImageAnnotationDialog' => array(
+      'dialog' => array(
+        'dialogClass' => 'splitButtons',
+        'position' => array(
+          'my' => "left top",
+          'at' => "left top",
+          'of' => '#cwrc_wrapper',
+        ),
+      ),
+    )), 'setting');
+  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.dialog.css");
+  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.list.css");
+  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.canvas.css");
+  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.logo.css");
+  islandora_cwrc_flag_recorded_resources();
+}
+
+/**
  * Implements template_preprocess_theme().
  */
 function template_preprocess_islandora_cwrc_writer_text_image_link_button(array &$variables) {
@@ -407,4 +408,19 @@ function template_preprocess_islandora_cwrc_writer_text_image_link_button(array 
  */
 function template_process_islandora_cwrc_writer_text_image_link_button(array &$variables) {
   $variables['icon'] = drupal_render($variables['icon']);
+}
+
+/**
+ * Implements template_preprocess_theme().
+ */
+function template_preprocess_islandora_cwrc_writer_text_image_link_dialog(array &$variables) {
+  module_load_include('inc', 'islandora_image_annotation', 'theme/theme');
+  template_preprocess_islandora_image_annotation_dialog($variables);
+}
+
+/**
+ * Implements template_process_theme().
+ */
+function template_process_islandora_cwrc_writer_text_image_link_dialog(array &$variables) {
+  template_process_islandora_image_annotation_dialog($variables);
 }

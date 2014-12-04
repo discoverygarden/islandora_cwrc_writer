@@ -3,6 +3,10 @@
 /**
  * @file
  * The dialog box used to create new Text to Image Annotations.
+ *
+ * Variables available:
+ * - $annotation_icons: The images to use for selecting rectangle, circle,
+ *   polygon display shapes.
  */
 ?>
 <div id="islandora-cwrc-writer-text-image-link-dialog" style="display: none;">

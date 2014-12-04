@@ -178,27 +178,6 @@ function islandora_cwrc_writer_cwrc_api_access_callback($type, $pid = NULL) {
  */
 function islandora_cwrc_writer_theme($existing, $type, $theme, $path) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
-  // Extends the CWRC-Writer by loading the Image Annotation widget into the
-  // eastern panel.
-  $image_annotation = NULL;
-  if (module_exists('islandora_image_annotation')) {
-    $image_annotation = array(
-      'file' => 'theme/theme.inc',
-      'base hook' => 'islandora_cwrc_writer',
-      'template' => 'theme/islandora-cwrc-writer--image-annotation',
-      'variables' => islandora_cwrc_writer_default_theme_variables(),
-    );
-  }
-  // Extends the CWRC-Writer by loading the JW Player in the eastern panel.
-  $jwplayer = NULL;
-  if (module_exists('islandora_jwplayer')) {
-    $jwplayer = array(
-      'file' => 'theme/theme.inc',
-      'base hook' => 'islandora_cwrc_writer',
-      'template' => 'theme/islandora-cwrc-writer',
-      'variables' => islandora_cwrc_writer_default_theme_variables(),
-    );
-  }
   return array(
     // Renders the editor as an iframe.
     'islandora_cwrc_writer_embedded' => array(
@@ -227,53 +206,22 @@ function islandora_cwrc_writer_theme($existing, $type, $theme, $path) {
       'variables' => islandora_cwrc_writer_default_theme_variables(),
       'file' => 'theme/theme.inc',
     ),
+    'islandora_cwrc_writer_image_annotation' => array(
+      'template' => 'theme/islandora-cwrc-writer-image-annotation',
+      'file' => 'theme/theme.inc',
+      'variables' => array('documents' => NULL, 'sources' => NULL),
+    ),
     'islandora_cwrc_writer_text_image_link_button' => array(
       'template' => 'theme/islandora-cwrc-writer-text-image-link-button',
       'variables' => array(),
       'file' => 'theme/theme.inc',
     ),
-    'islandora_image_annotation_dialog__text_image_link' => array(
+    'islandora_cwrc_writer_text_image_link_dialog' => array(
       'template' => 'theme/islandora-cwrc-writer-text-image-link-dialog',
       'variables' => array('object' => NULL),
       'file' => 'theme/theme.inc',
     ),
-    // The theme system automatically discovers the theme's functions and
-    // templates that implement more targeted "suggestions" of generic theme
-    // hooks. But suggestions implemented by a module must be explicitly
-    // registered. We also explicitly call the pre/post process functions in the
-    // base theme's pre/post process functions.
-    'islandora_cwrc_writer__image_annotation' => $image_annotation,
-    'islandora_cwrc_writer__audio' => $jwplayer,
-    'islandora_cwrc_writer__video' => $jwplayer,
   );
-}
-
-/**
- * Implements hook_theme_registry_alter().
- */
-function islandora_cwrc_writer_theme_registry_alter(array &$theme_registry) {
-  $theme_hooks = array(
-    'islandora_image_annotation_dialog__text_image_link',
-  );
-  $variable_process_phases = array(
-    'preprocess' => 'preprocess functions',
-    'process' => 'process functions',
-  );
-  // Insert the preprocess / process functions before the each theme hook for
-  // the suggested theme hooks, so if they are called directly they will have
-  // all of their required variables, js, and css.
-  foreach ($theme_hooks as $hook) {
-    if (isset($theme_registry[$hook])) {
-      $base_theme_hook = substr($hook, 0, strrpos($hook, '__'));;
-      foreach ($variable_process_phases as $phase => $phase_functions) {
-        $functions = &$theme_registry[$hook][$phase_functions];
-        $prefix = 'template_' . $phase . '_';
-        $index = array_search($prefix . $hook, $functions);
-        $function = array($prefix . $base_theme_hook);
-        array_splice($functions, $index, 0, $function);
-      }
-    }
-  }
 }
 
 /**
