@@ -68,6 +68,8 @@ function islandora_cwrc_writer_entity_search($query, $type, $page, $limit) {
     'fq' => $model_field . ':info\\:fedora/' . str_replace(':', '\\:', $content_model),
   );
   $url = parse_url(variable_get('islandora_solr_url', 'localhost:8080/solr'));
+  // Use Solr directly rather than the wrapper as it's easier to return JSON,
+  //  and entities are likely to be filtered out by the default config.
   $solr = new Apache_Solr_Service($url['host'], $url['port'], $url['path'] . '/');
   $solr->setCreateDocuments(0);
   try {
