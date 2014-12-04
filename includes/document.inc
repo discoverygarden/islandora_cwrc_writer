@@ -127,7 +127,7 @@ function islandora_cwrc_writer_document_schema($pid, $dsid = 'CWRC') {
  */
 function islandora_cwrc_writer_update_document(AbstractDatastream $datastream) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
-  $temp_name = drupal_tempnam('temporary://', 'file');
+  $temp_name = drupal_tempnam('public://', 'file');
   $input = fopen('php://input', 'r');
   $temp = fopen($temp_name, 'w');
   while ($data = fread($input, 1024)) {
