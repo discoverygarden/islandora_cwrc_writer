@@ -13,11 +13,12 @@
  */
 function islandora_cwrc_writer_autocomplete_schema($query) {
   $tuque = islandora_get_tuque_connection();
+  $schema_content_model = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
   $query = <<<EOQ
 SELECT ?pid ?label
 WHERE {
   ?pid <fedora-model:label> ?label ;
-       <fedora-model:hasModel> <info:fedora/cwrc:schemaCModel> .
+       <fedora-model:hasModel> <info:fedora/$schema_content_model> .
   FILTER(regex(?label, '$query') || regex(str(?pid), '$query' ))
 }
 EOQ;

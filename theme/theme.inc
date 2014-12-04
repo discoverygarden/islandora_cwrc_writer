@@ -389,7 +389,7 @@ function template_preprocess_islandora_cwrc_writer__video(array &$variables) {
 }
 
 /**
- * Implements template_preprocess_islandora_cwrc_writer_text_image_link_button().
+ * Implements template_preprocess_theme().
  */
 function template_preprocess_islandora_cwrc_writer_text_image_link_button(array &$variables) {
   $variables['icon'] = array(
@@ -403,7 +403,7 @@ function template_preprocess_islandora_cwrc_writer_text_image_link_button(array 
 }
 
 /**
- * Implements template_process_islandora_cwrc_writer_text_image_link_button().
+ * Implements template_process_theme().
  */
 function template_process_islandora_cwrc_writer_text_image_link_button(array &$variables) {
   $variables['icon'] = drupal_render($variables['icon']);

@@ -178,7 +178,6 @@ function islandora_cwrc_writer_default_config() {
         'place' => 'http://cwrc.ca/schemas/entities.rng',
       ),
     ),
-    //
     'schemas' => array(
       // These are all required objects for this module.
       'cwrc:teiSchema' => array(
@@ -649,7 +648,7 @@ function islandora_cwrc_writer_entity_content_datastreams() {
  */
 function islandora_cwrc_writer_get_entity_type(AbstractObject $object) {
   $valid_types = islandora_cwrc_writer_valid_entity_types();
-  foreach($object->models as $model) {
+  foreach ($object->models as $model) {
     $key = array_search($model, $valid_types);
     if ($key !== FALSE) {
       return $key;
@@ -670,7 +669,7 @@ function islandora_cwrc_writer_get_entity_type(AbstractObject $object) {
  */
 function islandora_cwrc_writer_entity_content_datastream_id(AbstractObject $object) {
   $datastreams = islandora_cwrc_writer_entity_content_datastreams($object);
-  foreach($object->models as $model) {
+  foreach ($object->models as $model) {
     if (isset($datastreams[$model])) {
       return $datastreams[$model];
     }

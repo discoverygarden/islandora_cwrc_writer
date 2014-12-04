@@ -69,14 +69,14 @@ function islandora_cwrc_writer_entity_search($query, $type, $page, $limit) {
   );
   $url = parse_url(variable_get('islandora_solr_url', 'localhost:8080/solr'));
   // Use Solr directly rather than the wrapper as it's easier to return JSON,
-  //  and entities are likely to be filtered out by the default config.
+  // and entities are likely to be filtered out by the default config.
   $solr = new Apache_Solr_Service($url['host'], $url['port'], $url['path'] . '/');
   $solr->setCreateDocuments(0);
   try {
     $results = $solr->search($query, 0, $_GET['limit'], $params);
     $results = json_decode($results->getRawResponse(), TRUE);
     $objects = array();
-    foreach($results['response']['docs'] as $doc) {
+    foreach ($results['response']['docs'] as $doc) {
       $objects[] = array(
         'pid' => $doc['PID'],
         'label' => $doc['fgs_label_s'],
@@ -102,6 +102,7 @@ function islandora_cwrc_writer_entity_search($query, $type, $page, $limit) {
  *   The PID of the entity in which to perform the request upon.
  */
 function islandora_cwrc_writer_cwrc_api_entity($type, $value = NULL) {
+  // @ignore security_17:function
   module_load_include('inc', 'islandora_rest', 'includes/utilities');
   module_load_include('inc', 'islandora_rest', 'includes/datastream');
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
@@ -185,7 +186,7 @@ function islandora_cwrc_writer_cwrc_api_update_entity(AbstractObject $object, $c
   if (empty($object[$dsid])) {
     $message = t('Could not update Entity: %label (%pid)', array(
       '%label' => $object->label,
-      '%pid' => $object->id
+      '%pid' => $object->id,
     ));
     throw new Exception($message, 404);
   }
@@ -277,9 +278,11 @@ function islandora_cwrc_writer_cwrc_api_get_person_label($content) {
   foreach ($name_parts as $name_part) {
     if (strcmp($name_part['partType'], 'surname') == 0) {
       $surname = $surname . ' ' . (string) $name_part;
-    } else if (strcmp($name_part['partType'], 'forename') == 0) {
+    }
+    elseif (strcmp($name_part['partType'], 'forename') == 0) {
       $forename = $forename . ' ' . (string) $name_part;
-    } else {
+    }
+    else {
       $surname = $surname . ' ' . (string) $name_part;
     }
   }
@@ -342,14 +345,14 @@ function islandora_cwrc_writer_cwrc_api_get_title_label($content) {
   $prime_title = '';
   $plain_title = '';
   $prime_set = FALSE;
-  foreach ($xml->titleInfo as $title_info){
+  foreach ($xml->titleInfo as $title_info) {
     // Check for primary title.
-    if (isset($title_info['usage']) && $title_info[usage] = 'Primary') {
-      $prime_title =  (string) $title_info->title;
+    if (isset($title_info['usage']) && $title_info['usage'] = 'Primary') {
+      $prime_title = (string) $title_info->title;
       $prime_set = TRUE;
     }
     // Ignore alternatives.
-    else if (isset($title_info['type']) && $title_info[type] = 'alternative') {
+    elseif (isset($title_info['type']) && $title_info['type'] = 'alternative') {
     }
     else {
       $plain_title = (string) $title_info->title;

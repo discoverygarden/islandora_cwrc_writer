@@ -603,7 +603,9 @@ function islandora_cwrc_writer_islandora_xml_form_builder_form_associations() {
       'content_model' => ISLANDORA_CWRC_WRITER_PERSON_ENTITY_CONTENT_MODEL,
       'form_name' => 'CWRC-Writer Person Entity Form',
       'dsid' => 'PERSON',
-      'title_field' => array('person', 'identity', 'preferredForm', 'namePart', 'namePart'),
+      'title_field' => array(
+        'person', 'identity', 'preferredForm', 'namePart', 'namePart',
+      ),
       'transform' => 'No Transform',
       'template' => FALSE,
     ),
@@ -611,7 +613,9 @@ function islandora_cwrc_writer_islandora_xml_form_builder_form_associations() {
       'content_model' => ISLANDORA_CWRC_WRITER_ORGANIZATION_ENTITY_CONTENT_MODEL,
       'form_name' => 'CWRC-Writer Organization Entity Form',
       'dsid' => 'ORGANIZATION',
-      'title_field' => array('person', 'identity', 'preferredForm', 'namePart', 'namePart'),
+      'title_field' => array(
+        'person', 'identity', 'preferredForm', 'namePart', 'namePart',
+      ),
       'transform' => 'No Transform',
       'template' => FALSE,
     ),
@@ -619,7 +623,9 @@ function islandora_cwrc_writer_islandora_xml_form_builder_form_associations() {
       'content_model' => ISLANDORA_CWRC_WRITER_TITLE_ENTITY_CONTENT_MODEL,
       'form_name' => 'CWRC-Writer Title Entity Form',
       'dsid' => 'TITLE',
-      'title_field' => array('person', 'identity', 'preferredForm', 'namePart', 'namePart'),
+      'title_field' => array(
+        'person', 'identity', 'preferredForm', 'namePart', 'namePart',
+      ),
       'transform' => 'No Transform',
       'template' => FALSE,
     ),
@@ -627,7 +633,9 @@ function islandora_cwrc_writer_islandora_xml_form_builder_form_associations() {
       'content_model' => ISLANDORA_CWRC_WRITER_PLACE_ENTITY_CONTENT_MODEL,
       'form_name' => 'CWRC-Writer Place Entity Form',
       'dsid' => 'PLACE',
-      'title_field' => array('person', 'identity', 'preferredForm', 'namePart', 'namePart'),
+      'title_field' => array(
+        'person', 'identity', 'preferredForm', 'namePart', 'namePart',
+      ),
       'transform' => 'No Transform',
       'template' => FALSE,
     ),

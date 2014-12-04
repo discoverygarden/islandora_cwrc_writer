@@ -82,7 +82,7 @@ function islandora_cwrc_writer_admin_settings_form_validate_schema_pid(array $el
   if (!$object) {
     form_error($element, t('The object specified %pid, does not exist.', array('%pid' => $pid)));
   }
-  else if (!in_array('cwrc:schemaCModel', $object->models)) {
+  elseif (!in_array(ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL, $object->models)) {
     form_error($element, t('The given object %label (%pid) is not a CWRC-Writer schema object.', array('%label' => $object->label, '%pid' => $pid)));
   }
 }
@@ -103,7 +103,7 @@ function islandora_cwrc_writer_admin_settings_form_validate_collection_pid(array
   if (!$object) {
     form_error($element, t('The object specified %pid, does not exist.', array('%pid' => $pid)));
   }
-  else if (!in_array('islandora:collectionCModel', $object->models)) {
+  elseif (!in_array('islandora:collectionCModel', $object->models)) {
     form_error($element, t('The given object %label (%pid) is not a collection.', array('%label' => $object->label, '%pid' => $pid)));
   }
   // @todo Check the collection policy to see if it can contain the given type.
