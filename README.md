@@ -59,25 +59,23 @@ ProxyPassReverse /cwrc/services/validator/ http://localhost:8080/validator/
 ## To Do
 
 * Look into integrating the [Geonames Service](http://github.com/cwrc/CWRC-Mapping-Timelines-Project/tree/master/geonames)
-* Hook into existing islandora entities system for search and creation / deletion.
 
 ## Troubleshooting/Issues
 
-Having problems or solved a problem? Check out the Islandora google groups for a solution.
-
-* [Islandora Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora)
-* [Islandora Dev Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora-dev)
+Having problems or solved a problem? Contact [discoverygarden](http://support.discoverygarden.ca).
 
 ## Maintainers/Sponsors
 
 Current maintainers:
 
-* [discovery garden](https://github.com/discoverygarden)
+* [discoverygarden](http://wwww.discoverygarden.ca)
 
 ## Development
 
-If you would like to contribute to this module, please check out our helpful [Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers) info, as well as our [Developers](http://islandora.ca/developers) section on the Islandora.ca site.
-The tests for this module will not run through Drupal’s UI. They will work using Drush, which works around Drupal’s batch API.
+If you would like to contribute to this module, please check out our helpful
+[Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers)
+info, [Developers](http://islandora.ca/developers) section on Islandora.ca and
+contact [discoverygarden](http://support.discoverygarden.ca).
 
 ## License
 
