@@ -1,4 +1,4 @@
-template_preprocess_islandora_cwrc_writer<?php
+<?php
 
 /**
  * @file
@@ -386,4 +386,25 @@ function template_preprocess_islandora_cwrc_writer__video(array &$variables) {
     $variables['eastern_panel'] = $viewer;
   }
   islandora_cwrc_flag_recorded_resources();
+}
+
+/**
+ * Implements template_preprocess_islandora_cwrc_writer_text_image_link_button().
+ */
+function template_preprocess_islandora_cwrc_writer_text_image_link_button(array &$variables) {
+  $variables['icon'] = array(
+    '#theme' => 'image',
+    '#alt' => t('Tag Text Annotation'),
+    '#path' => drupal_get_path('module', 'islandora_cwrc_writer') . '/images/img_text.png',
+    '#attributes' => array(
+      'class' => 'mceIcon',
+    ),
+  );
+}
+
+/**
+ * Implements template_process_islandora_cwrc_writer_text_image_link_button().
+ */
+function template_process_islandora_cwrc_writer_text_image_link_button(array &$variables) {
+  $variables['icon'] = drupal_render($variables['icon']);
 }

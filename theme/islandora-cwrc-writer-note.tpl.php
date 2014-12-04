@@ -1,11 +1,7 @@
 <?php
 /**
  * @file
- * Returns the a full HTML document for rendering the CWRC-Writer it's meant
- * only for use within an iFrame.
- *
- * Complete documentation for this file is available online.
- * @see https://drupal.org/node/1728208
+ * Displays a modal dialog CWRC-Writer used for editing notes.
  */
 ?>
 <div id="cwrc_wrapper">
