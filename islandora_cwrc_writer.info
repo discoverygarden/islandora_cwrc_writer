@@ -6,3 +6,5 @@ dependencies[] = islandora_rest
 dependencies[] = islandora_basic_collection
 core = 7.x
 version = 7.x-dev
+configure = admin/islandora/tools/cwrc-writer
+package = Islandora Tools
