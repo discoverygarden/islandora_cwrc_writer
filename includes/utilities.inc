@@ -614,10 +614,10 @@ EOT;
  */
 function islandora_cwrc_writer_valid_entity_types() {
   return array(
-    'person' => 'cwrc:person-entityCModel',
-    'organization' => 'cwrc:organization-entityCModel',
-    'title' => 'cwrc:title-entityCModel',
-    'place' => 'cwrc:place-entityCModel',
+    'person' => ISLANDORA_CWRC_WRITER_PERSON_ENTITY_CONTENT_MODEL,
+    'organization' => ISLANDORA_CWRC_WRITER_ORGANIZATION_ENTITY_CONTENT_MODEL,
+    'title' => ISLANDORA_CWRC_WRITER_TITLE_ENTITY_CONTENT_MODEL,
+    'place' => ISLANDORA_CWRC_WRITER_PLACE_ENTITY_CONTENT_MODEL,
   );
 }
 
@@ -630,10 +630,10 @@ function islandora_cwrc_writer_valid_entity_types() {
  */
 function islandora_cwrc_writer_entity_content_datastreams() {
   return array(
-    'cwrc:person-entityCModel' => 'PERSON',
-    'cwrc:organization-entityCModel' => 'ORGANIZATION',
-    'cwrc:title-entityCModel' => 'TITLE',
-    'cwrc:place-entityCModel' => 'PLACE',
+    ISLANDORA_CWRC_WRITER_PERSON_ENTITY_CONTENT_MODEL => 'PERSON',
+    ISLANDORA_CWRC_WRITER_ORGANIZATION_ENTITY_CONTENT_MODEL => 'ORGANIZATION',
+    ISLANDORA_CWRC_WRITER_TITLE_ENTITY_CONTENT_MODEL => 'TITLE',
+    ISLANDORA_CWRC_WRITER_PLACE_ENTITY_CONTENT_MODEL => 'PLACE',
   );
 }
 
