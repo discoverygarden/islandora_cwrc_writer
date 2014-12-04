@@ -20,6 +20,7 @@ function islandora_cwrc_writer_install() {
  * Implements hook_uninstall().
  */
 function islandora_cwrc_writer_uninstall() {
+  islandora_uninstall_solution_pack('islandora_cwrc_writer');
   $variables = array(
     'islandora_cwrc_writer_person_entity_collection',
     'islandora_cwrc_writer_organization_entity_collection',
