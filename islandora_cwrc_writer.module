@@ -339,7 +339,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // DS-COMPOSITE-MODEL Datastream.
   $datastream = $schema_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
   $datastream->label = 'DS-COMPOSITE-MODEL';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_schema_content_model_ds_composite_model.xml", FALSE);
   $schema_content_model->ingestDatastream($datastream);
 
@@ -352,7 +352,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // Collection Policy Datastream.
   $datastream = $schema_collection->constructDatastream('COLLECTION_POLICY', 'X');
   $datastream->label = 'Collection policy';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_schema_collection_collection_policy.xml", FALSE);
   $schema_collection->ingestDatastream($datastream);
 
@@ -441,7 +441,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // Collection Policy Datastream.
   $datastream = $entity_collection->constructDatastream('COLLECTION_POLICY', 'X');
   $datastream->label = 'Collection policy';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_entity_collection_collection_policy.xml", FALSE);
   $entity_collection->ingestDatastream($datastream);
 
@@ -454,7 +454,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // Collection Policy Datastream.
   $datastream = $person_entity_collection->constructDatastream('COLLECTION_POLICY', 'X');
   $datastream->label = 'Collection policy';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_person_entity_collection_collection_policy.xml", FALSE);
   $person_entity_collection->ingestDatastream($datastream);
 
@@ -467,7 +467,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // Collection Policy Datastream.
   $datastream = $organization_entity_collection->constructDatastream('COLLECTION_POLICY', 'X');
   $datastream->label = 'Collection policy';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_organization_entity_collection_collection_policy.xml", FALSE);
   $organization_entity_collection->ingestDatastream($datastream);
 
@@ -480,7 +480,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // Collection Policy Datastream.
   $datastream = $title_entity_collection->constructDatastream('COLLECTION_POLICY', 'X');
   $datastream->label = 'Collection policy';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_title_entity_collection_collection_policy.xml", FALSE);
   $title_entity_collection->ingestDatastream($datastream);
 
@@ -493,7 +493,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // Collection Policy Datastream.
   $datastream = $place_entity_collection->constructDatastream('COLLECTION_POLICY', 'X');
   $datastream->label = 'Collection policy';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_place_entity_collection_collection_policy.xml", FALSE);
   $place_entity_collection->ingestDatastream($datastream);
 
@@ -505,7 +505,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // DS-COMPOSITE-MODEL Datastream.
   $datastream = $person_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
   $datastream->label = 'DS-COMPOSITE-MODEL';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_person_entity_content_model_ds_composite_model.xml", FALSE);
   $person_content_model->ingestDatastream($datastream);
 
@@ -517,7 +517,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // DS-COMPOSITE-MODEL Datastream.
   $datastream = $organization_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
   $datastream->label = 'DS-COMPOSITE-MODEL';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_organization_entity_content_model_ds_composite_model.xml", FALSE);
   $organization_content_model->ingestDatastream($datastream);
 
@@ -529,7 +529,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // DS-COMPOSITE-MODEL Datastream.
   $datastream = $title_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
   $datastream->label = 'DS-COMPOSITE-MODEL';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_title_entity_content_model_ds_composite_model.xml", FALSE);
   $title_content_model->ingestDatastream($datastream);
 
@@ -541,7 +541,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   // DS-COMPOSITE-MODEL Datastream.
   $datastream = $place_content_model->constructDatastream('DS-COMPOSITE-MODEL', 'M');
   $datastream->label = 'DS-COMPOSITE-MODEL';
-  $datastream->mimetype = 'text/xml';
+  $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$datastream_path/cwrc_place_entity_content_model_ds_composite_model.xml", FALSE);
   $place_content_model->ingestDatastream($datastream);
 
