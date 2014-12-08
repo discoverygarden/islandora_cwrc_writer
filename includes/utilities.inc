@@ -178,6 +178,8 @@ function islandora_cwrc_writer_default_config() {
         'place' => 'http://cwrc.ca/schemas/entities.rng',
       ),
     ),
+    // This associative array of schema documents requires the PID of the schema
+    // object to be used as each entries key.
     'schemas' => array(
       // These are all required objects for this module.
       'cwrc:teiSchema' => array(
@@ -315,6 +317,9 @@ function islandora_cwrc_writer_default_theme_variables() {
     // modules that extend this theme have access to the 'owner' object in
     // which the 'documents' belong to.
     'object' => NULL,
+    // The PID of the schema object to use for validating the given documents
+    // (optional).
+    'schema' => NULL,
     // An array of PIDs for the Objects whose content can be loaded into the
     // CWRC-Writer text editor. Currently this module is hard coded to use
     // the CWRC datastream of these objects. This variables is required.
@@ -439,6 +444,24 @@ function islandora_cwrc_writer_get_schema_url(AbstractObject $object) {
 }
 
 /**
+ * Gets the Schema PID from the given object if defined.
+ *
+ * @param AbstractObject $object
+ *   The object to check.
+ *
+ * @return string|bool
+ *   The PID if the given object has a schema, FALSE otherwise.
+ */
+function islandora_cwrc_writer_get_document_schema_pid(AbstractObject $object) {
+  // Check if the object has a 'hasTEISchema' relationship.
+  $relationship = $object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasTEISchema');
+  if ($relationship) {
+    return $relationship[0]['object']['value'];
+  }
+  return FALSE;
+}
+
+/**
  * Gets the schema object for the given document.
  *
  * If one is not defined the default schema object will be returned if it is
@@ -451,10 +474,8 @@ function islandora_cwrc_writer_get_schema_url(AbstractObject $object) {
  *   The schema for the given document if found otherwise FALSE.
  */
 function islandora_cwrc_writer_get_document_schema_object(AbstractObject $object) {
-  // Check if the object has a 'hasTEISchema' relationship.
-  $relationship = $object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasTEISchema');
-  if ($relationship) {
-    $pid = $relationship[0]['object']['value'];
+  $pid = islandora_cwrc_writer_get_document_schema_pid($object);
+  if ($pid) {
     return islandora_object_load($pid);
   }
   return islandora_cwrc_writer_get_document_default_schema_object();
