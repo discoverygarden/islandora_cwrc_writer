@@ -74,22 +74,18 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
   $variables['settings']['schemas'] = array_merge($variables['settings']['schemas'], islandora_cwrc_writer_get_schemas());
   $variables['settings']['schemas'] = array_unique($variables['settings']['schemas'], SORT_REGULAR);
   // @todo Change the CWRC-Writer so that we can set the default without
-  // overwriting 'tei'. For now just use the first as the default. CWRC-Writer
-  // forces us to do that with 'tei'.
-  $default_schema_object = islandora_cwrc_writer_get_document_schema_object($variables['object']);
-  $default_schema = array(
-    'name' => $default_schema_object->label,
-    'url' => url("islandora/object/{$default_schema_object->id}/datastream/RDF-SCHEMA/view", array('absolute' => TRUE)),
-    'cssUrl' => url("islandora/object/{$default_schema_object->id}/datastream/RDF-CSS/view", array('absolute' => TRUE)),
-  );
-  // Remove the default if it's already present under a different key.
-  foreach ($variables['settings']['schemas'] as $key => $schema) {
-    if ($schema['url'] == $default_schema['url']) {
-      unset($variables['settings']['schemas'][$key]);
-    }
+  // overwriting 'tei'. CWRC-Writer forces us to do that with 'tei'.
+  $default_schema_pid = variable_get('islandora_cwrc_writer_default_schema_object', 'cwrc:teiSchema');
+  if (isset($variables['schema']) && $variables['schema']) {
+    $default_schema_pid = $variables['schema'];
   }
+  $default_schema = $variables['settings']['schemas'][$default_schema_pid];
+  $schemas = &$variables['settings']['schemas'];
+  // Remove the default if it's already present.
+  unset($schemas[$default_schema_pid]);
   // Set the default.
   $variables['settings']['schemas']['tei'] = $default_schema;
+
   drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
   // Override the CWRC-Writer/src/js/dialogs/fileManager.js and
   // CWRC-Writer/src/js/cwrcDialogs/cwrc-api.js.
