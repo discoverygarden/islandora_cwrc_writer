@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<collection_policy xmlns="http://www.islandora.ca">
+<collection_policy name="" xmlns="http://www.islandora.ca">
   <content_models>
     <content_model name="CWRC Organization Entity Content Model" dsid="" namespace="cwrc" pid="cwrc:organization-entityCModel"/>
   </content_models>
