@@ -280,6 +280,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
   $module_path = drupal_realpath($module_path);
   $datastream_path = "$module_path/data/datastreams";
+  $cwrc_rng_path = "$module_path/data/CWRC";
   $cwrc_writer_path = libraries_get_path(ISLANDORA_CWRC_WRITER_LIB);
   $cwrc_writer_path = drupal_realpath($cwrc_writer_path);
 
@@ -318,7 +319,8 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $datastream = $tei_schema->constructDatastream('RDF-SCHEMA', 'M');
   $datastream->label = 'RDF-SCHEMA';
   $datastream->mimetype = 'application/xml';
-  $datastream->setContentFromString(file_get_contents('http://cwrc.ca/schemas/cwrc_tei_lite.rng'));
+  $datastream->setContentFromFile("$cwrc_rng_path/cwrc_tei_lite.rng", FALSE);
+
   $tei_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
   $datastream = $tei_schema->constructDatastream('RDF-CSS', 'M');
@@ -337,7 +339,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $datastream = $event_schema->constructDatastream('RDF-SCHEMA', 'M');
   $datastream->label = 'RDF-SCHEMA';
   $datastream->mimetype = 'application/xml';
-  $datastream->setContentFromString(file_get_contents('http://cwrc.ca/schemas/orlando_events.rng'));
+  $datastream->setContentFromFile("$cwrc_rng_path/orlando_events.rng", FALSE);
   $event_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
   $datastream = $event_schema->constructDatastream('RDF-CSS', 'M');
@@ -356,7 +358,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $datastream = $biography_schema->constructDatastream('RDF-SCHEMA', 'M');
   $datastream->label = 'RDF-SCHEMA';
   $datastream->mimetype = 'application/xml';
-  $datastream->setContentFromString(file_get_contents('http://cwrc.ca/schemas/orlando_biography.rng'));
+  $datastream->setContentFromFile("$cwrc_rng_path/orlando_biography.rng", FALSE);
   $biography_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
   $datastream = $biography_schema->constructDatastream('RDF-CSS', 'M');
@@ -375,7 +377,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $datastream = $writing_schema->constructDatastream('RDF-SCHEMA', 'M');
   $datastream->label = 'RDF-SCHEMA';
   $datastream->mimetype = 'application/xml';
-  $datastream->setContentFromString(file_get_contents('http://cwrc.ca/schemas/orlando_writing.rng'));
+  $datastream->setContentFromFile("$cwrc_rng_path/orlando_writing.rng", FALSE);
   $writing_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
   $datastream = $writing_schema->constructDatastream('RDF-CSS', 'M');
