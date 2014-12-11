@@ -43,9 +43,9 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
       '#title' => t('RNG File'),
       '#type' => 'managed_file',
       '#required' => TRUE,
-      '#description' => t('Select file to upload.<br/>Files must be less than <b>@size MB.</b><br/>Allowed file types: <b>@ext.</b>', array('@size' => $upload_size, '@ext' => $rng_extensions[0])),
-      '#default_value' => isset($form_state['values']['files']) ? $form_state['values']['files'] : NULL,
-      '#upload_location' => 'temporary://',
+      '#description' => t('Select file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $rng_extensions[0])),
+      '#default_value' => isset($form_state['values']['rng_file']) ? $form_state['values']['rng_file'] : NULL,
+      '#upload_location' => 'public://',
       '#upload_validators' => array(
         'file_validate_extensions' => $rng_extensions,
          // Assume it's specified in MB.
@@ -67,9 +67,9 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
       '#title' => t('CSS File'),
       '#type' => 'managed_file',
       '#required' => TRUE,
-      '#description' => t('Select file to upload.<br/>Files must be less than <b>@size MB.</b><br/>Allowed file types: <b>@ext.</b>', array('@size' => $upload_size, '@ext' => $css_extensions[0])),
-      '#default_value' => isset($form_state['values']['files']) ? $form_state['values']['files'] : NULL,
-      '#upload_location' => 'temporary://',
+      '#description' => t('Select file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $css_extensions[0])),
+      '#default_value' => isset($form_state['values']['rng_file']) ? $form_state['values']['rng_file'] : NULL,
+      '#upload_location' => 'public://',
       '#upload_validators' => array(
         'file_validate_extensions' => $css_extensions,
         // Assume it's specified in MB.
@@ -114,10 +114,12 @@ EOT;
  *   The drupal form state.
  */
 function islandora_cwrc_writer_schema_upload_form_submit(array $form, array &$form_state) {
+  module_load_include('inc', 'islandora', 'includes/ingest.form');
   $object = islandora_ingest_form_get_object($form_state);
   $object->label = $form_state['values']['label'];
   if (empty($object['SCHEMA'])) {
     $ds = $object->constructDatastream('SCHEMA', 'M');
+    $ds->mimetype = "application/xml";
     $object->ingestDatastream($ds);
   }
   else {
@@ -126,11 +128,13 @@ function islandora_cwrc_writer_schema_upload_form_submit(array $form, array &$fo
   $rng_file = file_load($form_state['values']['rng_file']);
   $rng_path = drupal_realpath($rng_file->uri);
   $ds->setContentFromFile($rng_path, FALSE);
-  $ds->label = $rng_file->filename;
-  $ds->mimetype = "application/xml";
+  if ($ds->label !== $rng_file->filename) {
+    $ds->label = $rng_file->filename;
+  }
 
   if (empty($object['CSS'])) {
     $ds = $object->constructDatastream('CSS', 'M');
+    $ds->mimetype = "text/css";
     $object->ingestDatastream($ds);
   }
   else {
@@ -139,6 +143,8 @@ function islandora_cwrc_writer_schema_upload_form_submit(array $form, array &$fo
   $css_file = file_load($form_state['values']['css_file']);
   $css_path = drupal_realpath($css_file->uri);
   $ds->setContentFromFile($css_path, FALSE);
-  $ds->label = $css_file->filename;
-  $ds->mimetype = "text/css";
+  if ($ds->label !== $css_file->filename) {
+    $ds->label = $css_file->filename;
+  }
+
 }
