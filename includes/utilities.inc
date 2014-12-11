@@ -586,12 +586,13 @@ function islandora_cwrc_writer_add_model_processing_instruction_to_string($xml, 
  *   - xsltUrl: An absolute URL to the XSLT file. (optional)
  */
 function islandora_cwrc_writer_get_schemas() {
+  $content_model = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
   $query = <<<EOT
   PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
   PREFIX fedora-view: <info:fedora/fedora-system:def/model#>
   SELECT ?pid ?label ?disseminationType
   WHERE {
-    ?pid <fedora-model:hasModel> <info:fedora/cwrc:schemaCModel> .
+    ?pid <fedora-model:hasModel> <info:fedora/$content_model> .
     ?pid <fedora-model:label> ?label .
     OPTIONAL {
       ?disseminationType <fedora-view:disseminationType> <info:fedora/*/XSLT> .
