@@ -281,9 +281,6 @@ function template_preprocess_islandora_cwrc_writer_image_annotation(array &$vari
     '#theme' => 'islandora_image_annotation_canvas',
     '#object' => $object,
   );
-  $variables['logo'] = array(
-    '#theme' => 'islandora_image_annotation_shared_canvas_logo',
-  );
   // Drupal Settings.
   $settings = array(
     'pid' => $object->id,
@@ -365,7 +362,6 @@ function template_process_islandora_cwrc_writer_image_annotation(array &$variabl
   $variables['text_image_link_dialog_box'] = drupal_render($variables['text_image_link_dialog_box']);
   $variables['text_image_link_button'] = drupal_render($variables['text_image_link_button']);
   $variables['canvas'] = drupal_render($variables['canvas']);
-  $variables['logo'] = drupal_render($variables['logo']);
   // Change the dialog class so the boxes look correct.
   drupal_add_js(array(
     'islandoraImageAnnotationDialog' => array(
@@ -381,7 +377,6 @@ function template_process_islandora_cwrc_writer_image_annotation(array &$variabl
   drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.dialog.css");
   drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.list.css");
   drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.canvas.css");
-  drupal_add_css("$image_annotation_module_path/css/islandora_image_annotation.logo.css");
   islandora_cwrc_flag_recorded_resources();
 }
 
