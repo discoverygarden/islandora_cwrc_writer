@@ -5,7 +5,6 @@
  *
  * Variables available:
  * - $canvas: The shared canvases.
- * - $logo: The shared canvas logo.
  * - $dialog_box: The dialog box for adding new Image Annotations, it is
  *   initially hidden.
  * - $text_image_link_dialog_box: The dialog box for adding new text to image
@@ -20,7 +19,6 @@
 <?php endif; ?>
 <div id="islandora-image-annotation">
   <?php print $canvas; ?>
-  <?php print $logo; ?>
   <?php print $dialog_box; ?>
   <?php print $text_image_link_dialog_box; ?>
 </div>
