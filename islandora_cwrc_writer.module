@@ -12,6 +12,7 @@ define('ISLANDORA_CWRC_WRITER_RESOURCE_FLAG', 'cwrc_writer');
 define('ISLANDORA_CWRC_WRITER_LIB', 'CWRC-Writer');
 // Content Models.
 define('ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL', 'cwrc:schemaCModel');
+define('ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION', 'cwrc:schemaCollection');
 define('ISLANDORA_CWRC_WRITER_PERSON_ENTITY_CONTENT_MODEL', 'cwrc:person-entityCModel');
 define('ISLANDORA_CWRC_WRITER_ORGANIZATION_ENTITY_CONTENT_MODEL', 'cwrc:organization-entityCModel');
 define('ISLANDORA_CWRC_WRITER_TITLE_ENTITY_CONTENT_MODEL', 'cwrc:title-entityCModel');
@@ -297,7 +298,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $schema_content_model->ingestDatastream($datastream);
 
   // Schema Collection.
-  $schema_collection = $connection->repository->constructObject('cwrc:schemaCollection');
+  $schema_collection = $connection->repository->constructObject(ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION);
   $schema_collection->owner = 'fedoraAdmin';
   $schema_collection->label = 'CWRC Schema Collection';
   $schema_collection->models = 'islandora:collectionCModel';
@@ -314,17 +315,17 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $tei_schema->owner = 'fedoraAdmin';
   $tei_schema->label = 'CWRC Basic TEI Schema';
   $tei_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
-  $tei_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'cwrc:schemaCollection');
+  $tei_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION);
   // Add the schema datastream.
-  $datastream = $tei_schema->constructDatastream('RDF-SCHEMA', 'M');
-  $datastream->label = 'RDF-SCHEMA';
+  $datastream = $tei_schema->constructDatastream('SCHEMA', 'M');
+  $datastream->label = 'SCHEMA';
   $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$cwrc_rng_path/cwrc_tei_lite.rng", FALSE);
 
   $tei_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
-  $datastream = $tei_schema->constructDatastream('RDF-CSS', 'M');
-  $datastream->label = 'RDF-CSS';
+  $datastream = $tei_schema->constructDatastream('CSS', 'M');
+  $datastream->label = 'CSS';
   $datastream->mimetype = 'text/css';
   $datastream->setContentFromFile("{$cwrc_writer_path}/src/css/tei_converted.css", FALSE);
   $tei_schema->ingestDatastream($datastream);
@@ -334,16 +335,16 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $event_schema->owner = 'fedoraAdmin';
   $event_schema->label = 'CWRC Events Schema';
   $event_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
-  $event_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'cwrc:schemaCollection');
+  $event_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION);
   // Add the schema datastream.
-  $datastream = $event_schema->constructDatastream('RDF-SCHEMA', 'M');
-  $datastream->label = 'RDF-SCHEMA';
+  $datastream = $event_schema->constructDatastream('SCHEMA', 'M');
+  $datastream->label = 'SCHEMA';
   $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$cwrc_rng_path/orlando_events.rng", FALSE);
   $event_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
-  $datastream = $event_schema->constructDatastream('RDF-CSS', 'M');
-  $datastream->label = 'RDF-CSS';
+  $datastream = $event_schema->constructDatastream('CSS', 'M');
+  $datastream->label = 'CSS';
   $datastream->mimetype = 'text/css';
   $datastream->setContentFromFile("{$cwrc_writer_path}/src/css/orlando_converted.css", FALSE);
   $event_schema->ingestDatastream($datastream);
@@ -353,16 +354,16 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $biography_schema->owner = 'fedoraAdmin';
   $biography_schema->label = 'CWRC Biography Schema';
   $event_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
-  $biography_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'cwrc:schemaCollection');
+  $biography_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION);
   // Add the schema datastream.
-  $datastream = $biography_schema->constructDatastream('RDF-SCHEMA', 'M');
-  $datastream->label = 'RDF-SCHEMA';
+  $datastream = $biography_schema->constructDatastream('SCHEMA', 'M');
+  $datastream->label = 'SCHEMA';
   $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$cwrc_rng_path/orlando_biography.rng", FALSE);
   $biography_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
-  $datastream = $biography_schema->constructDatastream('RDF-CSS', 'M');
-  $datastream->label = 'RDF-CSS';
+  $datastream = $biography_schema->constructDatastream('CSS', 'M');
+  $datastream->label = 'CSS';
   $datastream->mimetype = 'text/css';
   $datastream->setContentFromFile("{$cwrc_writer_path}/src/css/orlando_converted.css", FALSE);
   $biography_schema->ingestDatastream($datastream);
@@ -372,16 +373,16 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $writing_schema->owner = 'fedoraAdmin';
   $writing_schema->label = 'CWRC Writing Schema';
   $event_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
-  $writing_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'cwrc:schemaCollection');
+  $writing_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION);
   // Add the schema datastream.
-  $datastream = $writing_schema->constructDatastream('RDF-SCHEMA', 'M');
-  $datastream->label = 'RDF-SCHEMA';
+  $datastream = $writing_schema->constructDatastream('SCHEMA', 'M');
+  $datastream->label = 'SCHEMA';
   $datastream->mimetype = 'application/xml';
   $datastream->setContentFromFile("$cwrc_rng_path/orlando_writing.rng", FALSE);
   $writing_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
-  $datastream = $writing_schema->constructDatastream('RDF-CSS', 'M');
-  $datastream->label = 'RDF-CSS';
+  $datastream = $writing_schema->constructDatastream('CSS', 'M');
+  $datastream->label = 'CSS';
   $datastream->mimetype = 'text/css';
   $datastream->setContentFromFile("{$cwrc_writer_path}/src/css/orlando_converted.css", FALSE);
   $writing_schema->ingestDatastream($datastream);
@@ -588,6 +589,21 @@ function islandora_cwrc_writer_islandora_xml_form_builder_form_associations() {
       ),
       'transform' => 'No Transform',
       'template' => FALSE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_islandora_ingest_steps().
+ */
+function islandora_cwrc_writer_cwrc_schemacmodel_islandora_ingest_steps() {
+  return array(
+    'islandora_cwrc_writer_schema_upload' => array(
+      'weight' => 10,
+      'type' => 'form',
+      'form_id' => 'islandora_cwrc_writer_schema_upload_form',
+      'module' => 'islandora_cwrc_writer',
+      'file' => 'includes/schema_upload.form.inc',
     ),
   );
 }

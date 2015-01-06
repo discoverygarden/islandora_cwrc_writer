@@ -184,23 +184,23 @@ function islandora_cwrc_writer_default_config() {
       // These are all required objects for this module.
       'cwrc:teiSchema' => array(
         'name' => 'CWRC Basic TEI Schema',
-        'url' => url('islandora/object/cwrc:teiSchema/datastream/RDF-SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:teiSchema/datastream/RDF-CSS/view', array('absolute' => TRUE)),
+        'url' => url('islandora/object/cwrc:teiSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
+        'cssUrl' => url('islandora/object/cwrc:teiSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
       'cwrc:eventSchema' => array(
         'name' => 'CWRC Events Schema',
-        'url' => url('islandora/object/cwrc:eventSchema/datastream/RDF-SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:eventSchema/datastream/RDF-CSS/view', array('absolute' => TRUE)),
+        'url' => url('islandora/object/cwrc:eventSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
+        'cssUrl' => url('islandora/object/cwrc:eventSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
       'cwrc:biographySchema' => array(
         'name' => 'CWRC Biography Schema',
-        'url' => url('islandora/object/cwrc:biographySchema/datastream/RDF-SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:biographySchema/datastream/RDF-CSS/view', array('absolute' => TRUE)),
+        'url' => url('islandora/object/cwrc:biographySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
+        'cssUrl' => url('islandora/object/cwrc:biographySchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
       'cwrc:writingSchema' => array(
         'name' => 'CWRC Writing Schema',
-        'url' => url('islandora/object/cwrc:writingSchema/datastream/RDF-SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:writingSchema/datastream/RDF-CSS/view', array('absolute' => TRUE)),
+        'url' => url('islandora/object/cwrc:writingSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
+        'cssUrl' => url('islandora/object/cwrc:writingSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
     ),
   );
@@ -436,7 +436,7 @@ EOT;
 function islandora_cwrc_writer_get_schema_url(AbstractObject $object) {
   $schema = islandora_cwrc_writer_get_document_schema_object($object);
   if ($schema) {
-    return url("islandora/object/{$schema->id}/datastream/RDF-SCHEMA/view", array(
+    return url("islandora/object/{$schema->id}/datastream/SCHEMA/view", array(
       'absolute' => TRUE,
     ));
   }
@@ -586,15 +586,16 @@ function islandora_cwrc_writer_add_model_processing_instruction_to_string($xml, 
  *   - xsltUrl: An absolute URL to the XSLT file. (optional)
  */
 function islandora_cwrc_writer_get_schemas() {
+  $content_model = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
   $query = <<<EOT
   PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
   PREFIX fedora-view: <info:fedora/fedora-system:def/model#>
   SELECT ?pid ?label ?disseminationType
   WHERE {
-    ?pid <fedora-model:hasModel> <info:fedora/islandora:markupeditorschemaCModel> .
+    ?pid <fedora-model:hasModel> <info:fedora/$content_model> .
     ?pid <fedora-model:label> ?label .
     OPTIONAL {
-      ?disseminationType <fedora-view:disseminationType> <info:fedora/*/RDF-XSLT> .
+      ?disseminationType <fedora-view:disseminationType> <info:fedora/*/XSLT> .
       ?pid <fedora-view:disseminates> ?disseminationType
     }
   }
@@ -607,16 +608,16 @@ EOT;
     $has_xslt = !empty($result['disseminationType']['value']);
     $schema = array(
       'name' => $result['label']['value'],
-      'url' => url("islandora/object/{$pid}/datastream/RDF-SCHEMA/view", array(
+      'url' => url("islandora/object/{$pid}/datastream/SCHEMA/view", array(
         'absolute' => TRUE,
       )),
-      'cssUrl' => url("islandora/object/{$pid}/datastream/RDF-CSS/view", array(
+      'cssUrl' => url("islandora/object/{$pid}/datastream/CSS/view", array(
         'absolute' => TRUE,
       )),
     );
     // XSLT datastreams are optional.
     if ($has_xslt) {
-      $schema['xsltUrl'] = url("islandora/object/{$pid}/datastream/RDF-XSLT/view", array(
+      $schema['xsltUrl'] = url("islandora/object/{$pid}/datastream/XSLT/view", array(
         'absolute' => TRUE,
       ));
     }
