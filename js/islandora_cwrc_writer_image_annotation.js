@@ -151,7 +151,7 @@ function cwrcWriterInit($, Writer, Delegator) {
         $textImageLinkButton.click(function () {
           var result, query, data;
           result = writer.utilities.isSelectionValid();
-          if (result === writer.VALID) {
+          if (result === writer.VALID || writer.NO_COMMON_PARENT) {
             writer.editor.currentBookmark = writer.editor.selection.getBookmark(1);
             // 'query' represents the selected text.
             query = writer.editor.currentBookmark.rng.toString();
@@ -167,12 +167,6 @@ function cwrcWriterInit($, Writer, Delegator) {
             writer.dialogManager.show('message', {
               title: 'Error',
               msg: 'Please select some text before adding an entity or tag.',
-              type: 'error'
-            });
-          } else if (result === writer.NO_COMMON_PARENT) {
-            writer.dialogManager.show('message', {
-              title: 'Error',
-              msg: 'Please ensure that the beginning and end of your selection have a common parent.<br/>For example, your selection cannot begin in one paragraph and end in another, or begin in bolded text and end outside of that text.',
               type: 'error'
             });
           }
