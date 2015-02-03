@@ -157,7 +157,7 @@
               <value>&lt;genre type="formatType"&gt;%value%&lt;/genre&gt;</value>
             </create>
             <read>
-              <path>mods:titleInfo/mods:title</path>
+              <path>mods:genre[@type="formatType"]</path>
               <context>parent</context>
             </read>
             <update>
@@ -197,7 +197,7 @@
 &lt;/relatedItem&gt;</value>
             </create>
             <read>
-              <path>mods:relatedItem/mods:part/mods:date</path>
+              <path>mods:relatedItem/mods:part/mods:date[@encoding="w3cdtf"]</path>
               <context>parent</context>
             </read>
             <update>

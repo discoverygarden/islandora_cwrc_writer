@@ -173,6 +173,25 @@
                       <required>FALSE</required>
                       <resizable>FALSE</resizable>
                       <tree>TRUE</tree>
+                      <actions>
+                        <create>
+                          <path>self::node()</path>
+                          <context>parent</context>
+                          <schema/>
+                          <type>element</type>
+                          <prefix>NULL</prefix>
+                          <value>personType</value>
+                        </create>
+                        <read>
+                          <path>personType</path>
+                          <context>parent</context>
+                        </read>
+                        <update>NULL</update>
+                        <delete>
+                          <path>self::node()</path>
+                          <context>self</context>
+                        </delete>
+                      </actions>
                     </properties>
                     <children>
                       <element name="personType">
@@ -202,21 +221,14 @@
                           <title>Person Type</title>
                           <tree>TRUE</tree>
                           <actions>
-                            <create>
-                              <path>self::node()</path>
-                              <context>parent</context>
-                              <schema/>
-                              <type>element</type>
-                              <prefix>NULL</prefix>
-                              <value>personType</value>
-                            </create>
+                            <create>NULL</create>
                             <read>
-                              <path>personType</path>
+                              <path>self::node()</path>
                               <context>parent</context>
                             </read>
                             <update>
                               <path>self::node()</path>
-                              <context>self</context>
+                              <context>parent</context>
                             </update>
                             <delete>NULL</delete>
                           </actions>
@@ -287,6 +299,25 @@
                           <required>FALSE</required>
                           <resizable>FALSE</resizable>
                           <tree>TRUE</tree>
+                          <actions>
+                            <create>
+                              <path>self::node()</path>
+                              <context>parent</context>
+                              <schema/>
+                              <type>element</type>
+                              <prefix>NULL</prefix>
+                              <value>projectId</value>
+                            </create>
+                            <read>
+                              <path>projectId</path>
+                              <context>parent</context>
+                            </read>
+                            <update>NULL</update>
+                            <delete>
+                              <path>self::node()</path>
+                              <context>self</context>
+                            </delete>
+                          </actions>
                         </properties>
                         <children>
                           <element name="projectId">
@@ -312,21 +343,14 @@
                               <title>Project</title>
                               <tree>TRUE</tree>
                               <actions>
-                                <create>
-                                  <path>self::node()</path>
-                                  <context>parent</context>
-                                  <schema/>
-                                  <type>element</type>
-                                  <prefix>NULL</prefix>
-                                  <value>projectId</value>
-                                </create>
+                                <create>NULL</create>
                                 <read>
-                                  <path>projectId</path>
+                                  <path>self::node()</path>
                                   <context>parent</context>
                                 </read>
                                 <update>
                                   <path>self::node()</path>
-                                  <context>self</context>
+                                  <context>parent</context>
                                 </update>
                                 <delete>NULL</delete>
                               </actions>
@@ -429,10 +453,7 @@
                           <path>namePart</path>
                           <context>parent</context>
                         </read>
-                        <update>
-                          <path>self::node()</path>
-                          <context>self</context>
-                        </update>
+                        <update>NULL</update>
                         <delete>
                           <path>self::node()</path>
                           <context>self</context>
@@ -573,10 +594,7 @@
                           <path>variant</path>
                           <context>parent</context>
                         </read>
-                        <update>
-                          <path>self::node()</path>
-                          <context>self</context>
-                        </update>
+                        <update>NULL</update>
                         <delete>
                           <path>self::node()</path>
                           <context>self</context>
@@ -783,10 +801,7 @@
                           <path>sameAs</path>
                           <context>parent</context>
                         </read>
-                        <update>
-                          <path>self::node()</path>
-                          <context>self</context>
-                        </update>
+                        <update>NULL</update>
                         <delete>
                           <path>self::node()</path>
                           <context>self</context>
@@ -959,10 +974,7 @@
                           <path>dateSingle</path>
                           <context>parent</context>
                         </read>
-                        <update>
-                          <path>self::node()</path>
-                          <context>self</context>
-                        </update>
+                        <update>NULL</update>
                         <delete>
                           <path>self::node()</path>
                           <context>self</context>
@@ -1037,7 +1049,7 @@
                               <value>&lt;standardDate qualifier="approximate"&gt;%value%&lt;/standardDate&gt;</value>
                             </create>
                             <read>
-                              <path>self::node()</path>
+                              <path>standardDate[@qualifier="approximate"]</path>
                               <context>parent</context>
                             </read>
                             <update>
@@ -1228,10 +1240,7 @@
                           <path>gender</path>
                           <context>parent</context>
                         </read>
-                        <update>
-                          <path>self::node()</path>
-                          <context>self</context>
-                        </update>
+                        <update>NULL</update>
                         <delete>
                           <path>self::node()</path>
                           <context>self</context>
@@ -1310,7 +1319,7 @@
                           <actions>
                             <create>NULL</create>
                             <read>
-                              <path>gender</path>
+                              <path>self::node()</path>
                               <context>parent</context>
                             </read>
                             <update>
@@ -1931,10 +1940,7 @@
                           <path>note</path>
                           <context>parent</context>
                         </read>
-                        <update>
-                          <path>self::node()</path>
-                          <context>self</context>
-                        </update>
+                        <update>NULL</update>
                         <delete>
                           <path>self::node()</path>
                           <context>self</context>
@@ -2035,7 +2041,7 @@
                         </read>
                         <update>
                           <path>self::node()</path>
-                          <context>parent</context>
+                          <context>self</context>
                         </update>
                         <delete>NULL</delete>
                       </actions>
