@@ -122,6 +122,10 @@ function cwrcWriterInit($, Writer, Delegator) {
           });
         }
       });
+      writer.schemaManager.loadSchema(schemaId, false, function() {
+        // XXX: No-op function required as, due to implementation detail:
+        // content gets wiped on load if not provided.
+      });
     });
     // load modules then do the setup
     require(['jquery', 'modules/entitiesList', 'modules/relations', 'modules/selection',
