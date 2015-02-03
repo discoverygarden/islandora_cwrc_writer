@@ -75,7 +75,8 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
   $variables['settings']['schemas'] = array_unique($variables['settings']['schemas'], SORT_REGULAR);
   // @todo Change the CWRC-Writer so that we can set the default without
   // overwriting 'tei'. CWRC-Writer forces us to do that with 'tei'.
-  $default_schema_pid = variable_get('islandora_cwrc_writer_default_schema_object', 'cwrc:teiSchema');
+  $default_schema_object = islandora_cwrc_writer_get_document_schema_object($variables['object']);
+  $default_schema_pid = $default_schema_object->id;
   if (isset($variables['schema']) && $variables['schema']) {
     $default_schema_pid = $variables['schema'];
   }

@@ -183,21 +183,25 @@ function islandora_cwrc_writer_default_config() {
     'schemas' => array(
       // These are all required objects for this module.
       'cwrc:teiSchema' => array(
+        'pid' => 'cwrc:teiSchema',
         'name' => 'CWRC Basic TEI Schema',
         'url' => url('islandora/object/cwrc:teiSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:teiSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
       'cwrc:eventSchema' => array(
+        'pid' => 'cwrc:eventSchema',
         'name' => 'CWRC Events Schema',
         'url' => url('islandora/object/cwrc:eventSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:eventSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
       'cwrc:biographySchema' => array(
+        'pid' => 'cwrc:biographySchema',
         'name' => 'CWRC Biography Schema',
         'url' => url('islandora/object/cwrc:biographySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:biographySchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
       'cwrc:writingSchema' => array(
+        'pid' => 'cwrc:writingSchema',
         'name' => 'CWRC Writing Schema',
         'url' => url('islandora/object/cwrc:writingSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:writingSchema/datastream/CSS/view', array('absolute' => TRUE)),
@@ -453,8 +457,8 @@ function islandora_cwrc_writer_get_schema_url(AbstractObject $object) {
  *   The PID if the given object has a schema, FALSE otherwise.
  */
 function islandora_cwrc_writer_get_document_schema_pid(AbstractObject $object) {
-  // Check if the object has a 'hasTEISchema' relationship.
-  $relationship = $object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasTEISchema');
+  // Check if the object has a 'hasSchema' relationship.
+  $relationship = $object->relationships->get(ISLANDORA_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP);
   if ($relationship) {
     return $relationship[0]['object']['value'];
   }
@@ -502,9 +506,9 @@ function islandora_cwrc_writer_get_document_default_schema_object() {
  */
 function islandora_cwrc_writer_set_document_schema(AbstractObject $object, AbstractObject $schema) {
   // Remove older relationships to the schema object.
-  $object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'hasSchema');
+  $object->relationships->remove(ISLANDORA_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP);
   // Add relationship to the given schema.
-  $object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasSchema', $schema->id);
+  $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP, $schema->id);
 }
 
 /**
@@ -607,6 +611,7 @@ EOT;
     $pid = $result['pid']['value'];
     $has_xslt = !empty($result['disseminationType']['value']);
     $schema = array(
+      'pid' => $result['pid']['value'],
       'name' => $result['label']['value'],
       'url' => url("islandora/object/{$pid}/datastream/SCHEMA/view", array(
         'absolute' => TRUE,

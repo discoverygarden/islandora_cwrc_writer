@@ -17,6 +17,7 @@ define('ISLANDORA_CWRC_WRITER_PERSON_ENTITY_CONTENT_MODEL', 'cwrc:person-entityC
 define('ISLANDORA_CWRC_WRITER_ORGANIZATION_ENTITY_CONTENT_MODEL', 'cwrc:organization-entityCModel');
 define('ISLANDORA_CWRC_WRITER_TITLE_ENTITY_CONTENT_MODEL', 'cwrc:title-entityCModel');
 define('ISLANDORA_CWRC_WRITER_PLACE_ENTITY_CONTENT_MODEL', 'cwrc:place-entityCModel');
+define('ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP', 'hasSchema');
 
 /**
  * Implements hook_menu().
