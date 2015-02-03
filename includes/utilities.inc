@@ -188,11 +188,11 @@ function islandora_cwrc_writer_default_config() {
         'url' => url('islandora/object/cwrc:teiSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:teiSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
-      'cwrc:eventSchema' => array(
-        'pid' => 'cwrc:eventSchema',
+      'cwrc:eventsSchema' => array(
+        'pid' => 'cwrc:eventsSchema',
         'name' => 'CWRC Events Schema',
-        'url' => url('islandora/object/cwrc:eventSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:eventSchema/datastream/CSS/view', array('absolute' => TRUE)),
+        'url' => url('islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
+        'cssUrl' => url('islandora/object/cwrc:eventsSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
       'cwrc:biographySchema' => array(
         'pid' => 'cwrc:biographySchema',
