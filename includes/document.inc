@@ -110,6 +110,13 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
  */
 function islandora_cwrc_writer_document_schema($pid, $dsid = 'CWRC') {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
+  // Need to get the version object which this page belongs to.
+  $object = islandora_object_load($pid);
+  $rels = $object->relationships->get(FEDORA_RELS_EXT_URI, 'isMemberOf');
+  $parent_rels = reset($rels);
+  $parent_object = islandora_object_load($parent_rels['object']['value']);
+  $schema_object = islandora_object_load(filter_input(INPUT_POST, 'pid'));
+  islandora_cwrc_writer_set_document_schema($parent_object, $schema_object);
   drupal_json_output(array('success' => TRUE));
 }
 
