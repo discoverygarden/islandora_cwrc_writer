@@ -56,9 +56,17 @@
         Drupal.IslandoraImageAnnotationDialog[base] = new Drupal.IslandoraImageAnnotationDialog(base, settings.islandoraImageAnnotationDialog);
         // Override the show function to handle the Text to Image use case.
         Drupal.IslandoraImageAnnotationDialog[base].show = function (data) {
-          var that, $dialog;
-          that = this;
-          $dialog = $(base);
+          var that = this,
+            $dialog = $(base),
+            result = data.writer.utilities.isSelectionValid();
+          if (result === data.writer.NO_SELECTION) {
+            data.writer.dialogManager.show('message', {
+              title: Drupal.t('Error'),
+              msg: Drupal.t('Please select some text before adding a text to image link.'),
+              type: 'error'
+            });
+            return;
+          }
           $dialog.dialog($.extend(this.defaultDialogProperties, {
             title: Drupal.t('Text/Image Annotation'),
             height: 400,
