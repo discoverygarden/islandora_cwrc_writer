@@ -61,8 +61,8 @@
             result = data.writer.utilities.isSelectionValid();
           if (result === data.writer.NO_SELECTION) {
             data.writer.dialogManager.show('message', {
-              title: 'Error',
-              msg: 'Please select some text before adding a text to image link.',
+              title: Drupal.t('Error'),
+              msg: Drupal.t('Please select some text before adding a text to image link.'),
               type: 'error'
             });
             return;
