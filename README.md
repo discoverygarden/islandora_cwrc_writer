@@ -56,6 +56,34 @@ ProxyPass /cwrc/services/validator/ http://localhost:8080/validator/
 ProxyPassReverse /cwrc/services/validator/ http://localhost:8080/validator/
 ```
 
+To be able to access Geonames service you must set up a proxy with 
+authentication: 
+
+```
+<Location /geonames>
+   RequestHeader set Authorization "Basic XXXXX"
+   ProxyPass http://apps.testing.cwrc.ca/cwrc-mtp/geonames/
+   ProxyPassReverse http://apps.testing.cwrc.ca/cwrc-mtp/geonames/
+</Location>
+```
+
+You'll need permission / authentication credentials from the 
+CWRC organization. You can generation the credentials (replaces the XXXXX 
+portion above) like so:
+
+```
+echo -n "username:password" | base64
+```
+
+In addition you must also enable mod_headers for the authentication 
+credentials to be passed on to the CWRC Geonames service. With apache2 on 
+Ubuntu this can be done like so:
+
+```
+sudo a2enmod headers
+sudo service apache2 restart
+```
+
 ## To Do
 
 * Look into integrating the [Geonames Service](http://github.com/cwrc/CWRC-Mapping-Timelines-Project/tree/master/geonames)
