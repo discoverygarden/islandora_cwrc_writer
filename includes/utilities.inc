@@ -170,7 +170,7 @@ function islandora_cwrc_writer_default_config() {
     'documents' => array(),
     'cwrcDialogs' => array(
       'cwrcApiUrl' => url('cwrc/api', array('absolute' => TRUE)),
-      'geonameUrl' => 'http://apps.testing.cwrc.ca/cwrc-mtp/geonames/',
+      'geonameUrl' => url('geonames', array('absolute' => TRUE)),
       'viafUrl' => url('viaf', array('absolute' => TRUE)),
       'schemas' => array(
         'person' => 'http://cwrc.ca/schemas/entities.rng',
