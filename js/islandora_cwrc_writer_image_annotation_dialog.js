@@ -114,7 +114,7 @@
                 if ($accordion.accordion('option', 'active') === 0) {
                   // Also the user must have actually marked up the image.
                   if (values.shapes.length < 1) {
-                    alert('You must draw a shape around the target.');
+                    alert(Drupal.t('You must draw a shape around the target.'));
                     return 0;
                   }
 
