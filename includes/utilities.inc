@@ -181,26 +181,29 @@ function islandora_cwrc_writer_default_config() {
     // This associative array of schema documents requires the PID of the schema
     // object to be used as each entries key.
     'schemas' => array(
-      // These are all required objects for this module.
-      'cwrc:teiSchema' => array(
+      // These are all required objects for this module. They must have the
+      // index of (tei, events, biography, writing) as the CWRC-Writer is
+      // hardcoded to expect these schema's to be present. Dialog boxes will
+      // break if they do not have these indexes.
+      'tei' => array(
         'pid' => 'cwrc:teiSchema',
         'name' => 'CWRC Basic TEI Schema',
         'url' => url('islandora/object/cwrc:teiSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:teiSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
-      'cwrc:eventsSchema' => array(
+      'events' => array(
         'pid' => 'cwrc:eventsSchema',
         'name' => 'CWRC Events Schema',
         'url' => url('islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:eventsSchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
-      'cwrc:biographySchema' => array(
+      'biography' => array(
         'pid' => 'cwrc:biographySchema',
         'name' => 'CWRC Biography Schema',
         'url' => url('islandora/object/cwrc:biographySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:biographySchema/datastream/CSS/view', array('absolute' => TRUE)),
       ),
-      'cwrc:writingSchema' => array(
+      'writing' => array(
         'pid' => 'cwrc:writingSchema',
         'name' => 'CWRC Writing Schema',
         'url' => url('islandora/object/cwrc:writingSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
@@ -468,8 +471,9 @@ function islandora_cwrc_writer_get_document_schema_pid(AbstractObject $object) {
 /**
  * Gets the schema object for the given document.
  *
- * If one is not defined the default schema object will be returned if it is
- * found.
+ * If one is not defined on the given object, it's parent is checked. If it's
+ * parent also does not specify a schema a default schema object will be
+ * returned if it is found.
  *
  * @param AbstractObject $object
  *   The islandora object to add the schema relation to.
@@ -481,6 +485,21 @@ function islandora_cwrc_writer_get_document_schema_object(AbstractObject $object
   $pid = islandora_cwrc_writer_get_document_schema_pid($object);
   if ($pid) {
     return islandora_object_load($pid);
+  }
+  else {
+    // The document might be single page part of a collection as opposed to a
+    // complete document onto itself.
+    $relationship = $object->relationships->get(FEDORA_RELS_EXT_URI, 'isMemberOf');
+    if ($relationship) {
+      $parent_pid = $relationship[0]['object']['value'];
+      $parent = islandora_object_load($parent_pid);
+      if ($parent) {
+        $pid = islandora_cwrc_writer_get_document_schema_pid($parent);
+        if ($pid) {
+          return islandora_object_load($pid);
+        }
+      }
+    }
   }
   return islandora_cwrc_writer_get_document_default_schema_object();
 }
@@ -523,11 +542,11 @@ function islandora_cwrc_writer_set_document_schema(AbstractObject $object, Abstr
  *   The XML document with the processing instruction added to it.
  */
 function islandora_cwrc_writer_add_model_processing_instruction(DOMDocument $doc, $url) {
+  // Remove any existing model processing instructions.
+  $doc = islandora_cwrc_writer_remove_model_processing_instructions($doc);
   // Double quotes are required or else the CWRC-Writer will break trying to
   // parse it because it uses a poor regular expression.
-  $instructions = <<<EOT
-  href="$url" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"";
-EOT;
+  $instructions = 'href="' .$url .'" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"';
   $processing_instruction = $doc->createProcessingInstruction('xml-model', $instructions);
   $doc->insertBefore($processing_instruction, $doc->documentElement);
   return $doc;
@@ -545,11 +564,8 @@ EOT;
  *   TRUE if successful, FALSE otherwise.
  */
 function islandora_cwrc_writer_add_model_processing_instruction_to_file($filename, $url) {
-  $filename = drupal_realpath($filename);
-  $doc = new DOMDocument("1.0", "UTF-8");
-  $doc->preserveWhiteSpace = FALSE;
-  $doc->formatOutput = TRUE;
-  if ($doc->load($filename)) {
+  $doc = islandora_cwrc_writer_load_document_from_file($filename);
+  if ($doc) {
     $doc = islandora_cwrc_writer_add_model_processing_instruction($doc, $url);
     return ($doc->save($filename) !== FALSE);
   }
@@ -569,14 +585,129 @@ function islandora_cwrc_writer_add_model_processing_instruction_to_file($filenam
  *   otherwise.
  */
 function islandora_cwrc_writer_add_model_processing_instruction_to_string($xml, $url) {
-  $doc = new DOMDocument("1.0", "UTF-8");
-  $doc->preserveWhiteSpace = FALSE;
-  $doc->formatOutput = TRUE;
-  if ($doc->loadXML($xml)) {
+  $doc = islandora_cwrc_writer_load_document_from_string($xml);
+  if ($doc) {
     $doc = islandora_cwrc_writer_add_model_processing_instruction($doc, $url);
     return $doc->saveXML();
   }
   return FALSE;
+}
+
+/**
+ * Remove the xml-model processing instructions from the given DOMDocument.
+ *
+ * @param DOMDocument $doc
+ *   The XML document to remove the xml-model processing instructions from.
+ *
+ * @return DOMDocument
+ *   The XML document with the processing instruction removed.
+ */
+function islandora_cwrc_writer_remove_model_processing_instructions(DOMDocument $doc) {
+  if ($doc->hasChildNodes()) {
+    foreach ($doc->childNodes as $childNode) {
+      if (is_a($childNode, 'DOMProcessingInstruction') && $childNode->nodeName == 'xml-model') {
+        $childNode->parentNode->removeChild($childNode);
+      }
+    }
+  }
+  return $doc;
+}
+
+/**
+ * Removes the xml-model processing instructions from the given XML file.
+ *
+ * @param string $filename
+ *   The XML document to remove the model processing instruction from.
+ *
+ * @return bool
+ *   TRUE if successful, FALSE otherwise.
+ */
+function islandora_cwrc_writer_remove_model_processing_instruction_from_file($filename) {
+  $doc = islandora_cwrc_writer_load_document_from_file($filename);
+  if ($doc) {
+    $doc = islandora_cwrc_writer_remove_model_processing_instructions($doc);
+    return ($doc->save($filename) !== FALSE);
+  }
+  return FALSE;
+}
+
+/**
+ * Removes the xml-model processing instructions form the given XML file.
+ *
+ * @param string $xml
+ *   The XML document to remove the model processing instruction from.
+ *
+ * @return string
+ *   The XML document with the processing instruction removed if successful, FALSE
+ *   otherwise.
+ */
+function islandora_cwrc_writer_remove_model_processing_instruction_from_string($xml) {
+  $doc = islandora_cwrc_writer_load_document_from_string($xml);
+  if ($doc) {
+    $doc = islandora_cwrc_writer_remove_model_processing_instructions($doc);
+    return $doc->saveXML();
+  }
+  return FALSE;
+}
+
+/**
+ * Loads a document from the given file.
+ *
+ * Respects the required DOMDocument options for a document to work in the
+ * CWRC-Writer.
+ *
+ * @param string $filename
+ *   The path to the XML document to load.
+ *
+ * @return bool|DOMDocument
+ *   The XML document if successfully loaded, FALSE otherwise.
+ */
+function islandora_cwrc_writer_load_document_from_file($filename) {
+  $doc = islandora_cwrc_writer_create_domdocument();
+  // If a processing instruction is present it will throw a warning so we
+  // silence it.
+  $filename = drupal_realpath($filename);
+  if (@$doc->load($filename)) {
+    return $doc;
+  }
+  return FALSE;
+}
+
+/**
+ * Loads a document from the given string.
+ *
+ * Respects the required DOMDocument options for a document to work in the
+ * CWRC-Writer.
+ *
+ * @param string $xml
+ *   The XML document to load.
+ *
+ * @return bool|DOMDocument
+ *   The XML document if successfully loaded, FALSE otherwise.
+ */
+function islandora_cwrc_writer_load_document_from_string($xml) {
+  $doc = islandora_cwrc_writer_create_domdocument();
+  // If a processing instruction is present it will throw a warning so we
+  // silence it.
+  if (@$doc->loadXML($xml)) {
+    return $doc;
+  }
+  return FALSE;
+}
+
+/**
+ * Creates a DOMDocument with required options for use in the CWRC-Writer.
+ *
+ * @return DOMDocument
+ *   A DOMDocument with required options for use in the CWRC-Writer
+ */
+function islandora_cwrc_writer_create_domdocument() {
+  $doc = new DOMDocument("1.0", "UTF-8");
+  // We must preserve whitespace and not format the output for the
+  // EMIC / CWRC-Writer newlines to <br> tags feature.
+  $doc->preserveWhiteSpace = TRUE;
+  $doc->formatOutput = FALSE;
+  return $doc;
 }
 
 /**

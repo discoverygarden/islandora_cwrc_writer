@@ -39,21 +39,18 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
   $request_method = islandora_rest_get_request_method();
   try {
     // Fetch the requested resource. Throws 404, if the resource is not found.
-    $resource = islandora_rest_get_requested_resource($pid, $dsid);
+    $document = islandora_rest_get_requested_resource($pid, $dsid);
     // Check Drupal Permissions. Throws 401, 403, if access is denied.
-    islandora_rest_require_access('datastream', $request_method, $resource);
+    islandora_rest_require_access('datastream', $request_method, $document);
     // Generate the Response, we don't implement POST / DELETE as we don't
     // currently allow the user to make new documents or remove them.
     switch ($request_method) {
       case 'GET':
-        $parameters = array(
-          'resource' => $resource,
-          'request' => array(
-            'version' => FALSE,
-            'content' => TRUE,
-          ),
-        );
-        $response = islandora_rest_datastream_get_response($parameters);
+        $schema_url = islandora_cwrc_writer_get_schema_url($document->parent);
+        // Adding the processing instruction to the document sets the default
+        // schema to be used by the CWRC-Writer. This assumes that the document
+        // does not already have an xml-model processing instruction.
+        $response = islandora_cwrc_writer_add_model_processing_instruction_to_string($document->content, $schema_url);
         break;
 
       case 'PUT':
@@ -63,14 +60,7 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
         // actual PUT requests now. I'm not sure if this function is ready for
         // show-time, perhaps we'll integrated it with Islandora Rest at a later
         // time.
-        $parameters = array(
-          'resource' => $resource,
-          'request' => array(
-            'version' => FALSE,
-            'content' => TRUE,
-          ),
-        );
-        $response = islandora_cwrc_writer_update_document($parameters['resource']);
+        $response = islandora_cwrc_writer_update_document($document);
         break;
 
       default:
@@ -112,11 +102,16 @@ function islandora_cwrc_writer_document_schema($pid, $dsid = 'CWRC') {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   // Need to get the version object which this page belongs to.
   $object = islandora_object_load($pid);
-  $rels = $object->relationships->get(FEDORA_RELS_EXT_URI, 'isMemberOf');
-  $parent_rels = reset($rels);
-  $parent_object = islandora_object_load($parent_rels['object']['value']);
-  $schema_object = islandora_object_load(filter_input(INPUT_POST, 'pid'));
-  islandora_cwrc_writer_set_document_schema($parent_object, $schema_object);
+  if ($object) {
+    // For now we assume documents will be split across pages, rather than an
+    // complete object onto itself.
+    $rels = $object->relationships->get(FEDORA_RELS_EXT_URI, 'isMemberOf');
+    $parent_rels = reset($rels);
+    $parent_object = islandora_object_load($parent_rels['object']['value']);
+    $schema_object = islandora_object_load(filter_input(INPUT_POST, 'pid'));
+    islandora_cwrc_writer_set_document_schema($parent_object, $schema_object);
+  }
+  // Message isn't handled client side.
   drupal_json_output(array('success' => TRUE));
 }
 
@@ -142,6 +137,10 @@ function islandora_cwrc_writer_update_document(AbstractDatastream $datastream) {
   }
   fclose($input);
   fclose($temp);
+  // We must remove the xml-model processing instruction from the file, it will
+  // cause problems in other modules since it is not well supported by PHP
+  // version of libxml.
+  islandora_cwrc_writer_remove_model_processing_instruction_from_file($temp_name);
   $datastream->setContentFromFile($temp_name);
   drupal_unlink($temp_name);
   return array('success' => TRUE);

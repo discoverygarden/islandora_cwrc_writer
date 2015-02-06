@@ -354,7 +354,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $biography_schema = $connection->repository->constructObject('cwrc:biographySchema');
   $biography_schema->owner = 'fedoraAdmin';
   $biography_schema->label = 'CWRC Biography Schema';
-  $event_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
+  $biography_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
   $biography_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION);
   // Add the schema datastream.
   $datastream = $biography_schema->constructDatastream('SCHEMA', 'M');
@@ -373,7 +373,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $writing_schema = $connection->repository->constructObject('cwrc:writingSchema');
   $writing_schema->owner = 'fedoraAdmin';
   $writing_schema->label = 'CWRC Writing Schema';
-  $event_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
+  $writing_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
   $writing_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION);
   // Add the schema datastream.
   $datastream = $writing_schema->constructDatastream('SCHEMA', 'M');
