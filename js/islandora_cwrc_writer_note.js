@@ -1,5 +1,9 @@
 /*jshint nonew: false, browser: true */
 /*global jQuery, Drupal*/
+/**
+ * @file
+ * Loads the embbeded CWRC-Writer for creating notes inside of the CWRC-Writer.
+ */
 var writer = null;
 /**
  * CWRC-Writer global callback used to configure the CWRC-Writer.
@@ -8,6 +12,7 @@ var writer = null;
  * @param Writer
  * @param Delegator
  */
+// @ignore style_camel_case:function
 function cwrcWriterInit($, Writer, Delegator) {
   'use strict';
   var config = Drupal.settings.CWRCWriter;
@@ -17,7 +22,7 @@ function cwrcWriterInit($, Writer, Delegator) {
     $('#' + writer.editor.id + '_ifr').height($(window).height() - uiHeight);
   }
 
-  function setupLayoutAndModules(w, EntitiesList, StructureTree, Validation) {
+  function setup_layout_and_modules(w, EntitiesList, StructureTree, Validation) {
     w.layout = $('#cwrc_wrapper').layout({
       defaults: {
         maskIframesOnResize: true,
@@ -64,7 +69,7 @@ function cwrcWriterInit($, Writer, Delegator) {
   writer.event('writerInitialized').subscribe(function (writer) {
     // load modules then do the setup
     require(['modules/entitiesList', 'modules/structureTree', 'modules/validation'], function (EntitiesList, StructureTree, Validation) {
-      setupLayoutAndModules(writer, EntitiesList, StructureTree, Validation);
+      setup_layout_and_modules(writer, EntitiesList, StructureTree, Validation);
     });
   });
 }

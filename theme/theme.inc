@@ -69,23 +69,7 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
     $navigation_widget = islandora_cwrc_writer_document_navigation_widget($variables['documents']);
     array_unshift($variables['header'], $navigation_widget);
   }
-  // Load the contextual information like the settings and our init function.
-  $variables['settings']['documents'] = $variables['documents'];
-  $variables['settings']['schemas'] = array_merge($variables['settings']['schemas'], islandora_cwrc_writer_get_schemas());
-  $variables['settings']['schemas'] = array_unique($variables['settings']['schemas'], SORT_REGULAR);
-  // @todo Change the CWRC-Writer so that we can set the default without
-  // overwriting 'tei'. CWRC-Writer forces us to do that with 'tei'.
-  $default_schema_object = islandora_cwrc_writer_get_document_schema_object($variables['object']);
-  $default_schema_pid = $default_schema_object->id;
-  if (isset($variables['schema']) && $variables['schema']) {
-    $default_schema_pid = $variables['schema'];
-  }
-  $default_schema = $variables['settings']['schemas'][$default_schema_pid];
-  $schemas = &$variables['settings']['schemas'];
-  // Remove the default if it's already present.
-  unset($schemas[$default_schema_pid]);
-  // Set the default.
-  $variables['settings']['schemas']['tei'] = $default_schema;
+  _template_preprocess_islandora_cwrc_writer_schema_settings($variables);
 
   drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
   // Override the CWRC-Writer/src/js/dialogs/fileManager.js and
@@ -251,6 +235,8 @@ function template_preprocess_islandora_cwrc_writer_note(array &$variables) {
   // Load the CWRC-Writer.
   libraries_load(ISLANDORA_CWRC_WRITER_LIB);
   $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
+  // We need to use the same default as the main CWRC-Writer.
+  _template_preprocess_islandora_cwrc_writer_schema_settings($variables);
   // Override CWRC-Writer Settings / startup behaviour.
   drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
   drupal_add_js("$module_path/js/islandora_cwrc_writer_note.js");
@@ -415,4 +401,21 @@ function template_preprocess_islandora_cwrc_writer_text_image_link_dialog(array 
  */
 function template_process_islandora_cwrc_writer_text_image_link_dialog(array &$variables) {
   template_process_islandora_image_annotation_dialog($variables);
+}
+
+/**
+ * Helper function used to preprocess the schemas section of the settings.
+ *
+ * This should be called in the template_preprocess hooks of anything that
+ * renders the CWRC-Writer.
+ *
+ * @param array $variables
+ *   The same $variables array passed to a CWRC-Writer theme preprocess
+ *   function.
+ */
+function _template_preprocess_islandora_cwrc_writer_schema_settings(array &$variables) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
+  // Load the contextual information like the settings and our init function.
+  $variables['settings']['schemas'] = array_merge($variables['settings']['schemas'], islandora_cwrc_writer_get_schemas());
+  $variables['settings']['schemas'] = array_unique($variables['settings']['schemas'], SORT_REGULAR);
 }
