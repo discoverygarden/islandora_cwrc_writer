@@ -45,8 +45,47 @@ function cwrcWriterInit($, Writer, Delegator) {
         }
       });
       writer.schemaManager.loadSchema(schemaId, false, function() {
-        // XXX: No-op function required as, due to implementation detail:
-        // content gets wiped on load if not provided.
+        var defaultTEI =
+          '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
+          '<teiHeader>' +
+          '<fileDesc>' +
+          '<titleStmt>' +
+          '<title></title>' +
+          '</titleStmt>' +
+          '<publicationStmt>' +
+          '<p/>' +
+          '</publicationStmt>' +
+          '<sourceDesc>' +
+          '<p></p>' +
+          '</sourceDesc>' +
+          '</fileDesc>' +
+          '</teiHeader>' +
+          '<text>' +
+          '<body><p>Paste or type your text here</p></body>' +
+          '</text>' +
+          '</TEI>';
+        var defaultXML;
+        var root;
+        var defaultDoc;
+        var doc;
+        var parser = new DOMParser();
+        doc = parser.parseFromString(writer.editor.getContent(), 'text/xml');
+        root = doc.firstElementChild.getAttribute('_tag');
+        switch (writer.root) {
+          case 'TEI':
+            if (root !== 'TEI') {
+              defaultDoc = parser.parseFromString(defaultTEI, 'text/xml');
+              writer.converter.doProcessing(defaultDoc);
+            }
+            break;
+          default:
+            if (root !== writer.root) {
+              defaultXML = '<'+ writer.root + '></'+ writer.root + '>';
+              defaultDoc = parser.parseFromString(defaultXML, 'text/xml');
+              writer.converter.doProcessing(defaultDoc);
+            }
+            break;
+        }
       });
     });
     // load modules then do the setup
