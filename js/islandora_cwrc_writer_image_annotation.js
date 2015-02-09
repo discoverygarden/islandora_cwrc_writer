@@ -76,8 +76,11 @@ function cwrcWriterInit($, Writer, Delegator) {
         var defaultDoc;
         var doc;
         var parser = new DOMParser();
-        doc = parser.parseFromString(writer.editor.getContent(), 'text/xml');
-        root = doc.firstElementChild.getAttribute('_tag');
+        // We have to parse as HTML as HTML entities will break XML parsing in
+        // firefox.
+        doc = parser.parseFromString(writer.editor.getContent(), 'text/html');
+        // Embeds the document in the body tag.
+        root = doc.body.firstElementChild.getAttribute('_tag');
         switch (writer.root) {
           case 'TEI':
             if (root !== 'TEI') {
