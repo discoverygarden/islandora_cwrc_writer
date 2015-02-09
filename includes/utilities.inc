@@ -546,7 +546,7 @@ function islandora_cwrc_writer_add_model_processing_instruction(DOMDocument $doc
   $doc = islandora_cwrc_writer_remove_model_processing_instructions($doc);
   // Double quotes are required or else the CWRC-Writer will break trying to
   // parse it because it uses a poor regular expression.
-  $instructions = 'href="' .$url .'" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"';
+  $instructions = 'href="' . $url . '" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"';
   $processing_instruction = $doc->createProcessingInstruction('xml-model', $instructions);
   $doc->insertBefore($processing_instruction, $doc->documentElement);
   return $doc;
@@ -604,9 +604,9 @@ function islandora_cwrc_writer_add_model_processing_instruction_to_string($xml, 
  */
 function islandora_cwrc_writer_remove_model_processing_instructions(DOMDocument $doc) {
   if ($doc->hasChildNodes()) {
-    foreach ($doc->childNodes as $childNode) {
-      if (is_a($childNode, 'DOMProcessingInstruction') && $childNode->nodeName == 'xml-model') {
-        $childNode->parentNode->removeChild($childNode);
+    foreach ($doc->childNodes as $child_node) {
+      if (is_a($child_node, 'DOMProcessingInstruction') && $child_node->nodeName == 'xml-model') {
+        $child_node->parentNode->removeChild($child_node);
       }
     }
   }
@@ -638,8 +638,8 @@ function islandora_cwrc_writer_remove_model_processing_instruction_from_file($fi
  *   The XML document to remove the model processing instruction from.
  *
  * @return string
- *   The XML document with the processing instruction removed if successful, FALSE
- *   otherwise.
+ *   The XML document with the processing instruction removed if successful,
+ *   FALSE otherwise.
  */
 function islandora_cwrc_writer_remove_model_processing_instruction_from_string($xml) {
   $doc = islandora_cwrc_writer_load_document_from_string($xml);

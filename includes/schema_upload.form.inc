@@ -80,14 +80,14 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
 }
 
 /**
- * Validates that the given label is unique and not used by other schema objects.
+ * Validates that the given label is unique among schema objects.
  *
  * @param array $element
  *   The element to validate.
- * @param array $form
- *   The drupal form.
  * @param array $form_state
  *   The drupal form state.
+ * @param array $form
+ *   The drupal form.
  */
 function islandora_cwrc_writer_schema_upload_form_validate_label(array $element, array &$form_state, array $form) {
   $tuque = islandora_get_tuque_connection();

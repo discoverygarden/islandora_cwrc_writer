@@ -9,7 +9,7 @@
   // Since we don't know server side what the fragment identifier is we must
   // correct the settings here, so we load the appropriate source object. This
   // must run before Drupal.attachBehaviours() of image annotation.
-  function getSettings(widget) {
+  function get_settings(widget) {
     var document, index, source, settings;
     document = (window.location.hash !== "") ? window.location.hash.replace(/#/g, '') : Drupal.settings.CWRCWriter.documents[0];
     index = $.inArray(document, Drupal.settings.islandoraCWRCWriterImageAnnotation.documents);
@@ -26,7 +26,7 @@
     function (index, widget) {
       var originalAttach = Drupal.behaviors[widget].attach;
       Drupal.behaviors[widget].attach = function () {
-        Drupal.settings[widget] = getSettings(widget);
+        Drupal.settings[widget] = get_settings(widget);
         originalAttach.apply(this, arguments);
       };
     });

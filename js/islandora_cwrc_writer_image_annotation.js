@@ -1,6 +1,12 @@
 /*jshint browser: true*/
 /*global jQuery, Drupal, setupLayoutAndModules, CwrcApi:true*/
 /**
+ * @file
+ * Loads the CWRC-Writer with the Image Annotation Widget.
+ *
+ * This file should closely mirror islandora_cwrc_writer.js.
+ */
+/**
  * CWRC-Writer global callback used to configure the CWRC-Writer.
  *
  * This overwrites the existing cwrcWriterInit callback so that it can properly
@@ -12,6 +18,7 @@
  * @param Writer
  * @param Delegator
  */
+// @ignore style_camel_case:function
 function cwrcWriterInit($, Writer, Delegator) {
   'use strict';
   var writer, config;
