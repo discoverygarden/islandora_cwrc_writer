@@ -69,6 +69,7 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
     $navigation_widget = islandora_cwrc_writer_document_navigation_widget($variables['documents']);
     array_unshift($variables['header'], $navigation_widget);
   }
+  $variables['settings']['documents'] = $variables['documents'];
   _template_preprocess_islandora_cwrc_writer_schema_settings($variables);
 
   drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
