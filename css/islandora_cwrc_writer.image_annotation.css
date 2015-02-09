@@ -17,7 +17,7 @@
   font-weight: bold;
 }
 .context-menu-list {
-  z-index: 10 !important;
+  z-index: 65 !important;
 }
 .entitiesList .textimagelink .box {
   background-image: url('../images/cake.png');
