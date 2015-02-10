@@ -315,7 +315,7 @@ function template_preprocess_islandora_cwrc_writer_image_annotation(array &$vari
         'allowEntityLinking' => variable_get('islandora_image_annotation_use_entity_tagging', TRUE),
         'useTitleVocabulary' => variable_get('islandora_image_annotation_use_title_vocabulary', FALSE),
         'strokeWidths' => variable_get('islandora_image_annotation_stroke_width', '.3 .6 .9 1.2 1.5'),
-        'canChooseColour' => !variable_get('islandora_annotation_optimized', TRUE),
+        'canChooseColour' => !variable_get('islandora_image_annotation_choose_color', TRUE),
         'dialog' => array(
           'dialogClass' => 'islandora-image-annotation',
         ),
