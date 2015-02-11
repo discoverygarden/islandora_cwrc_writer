@@ -13,7 +13,7 @@
  */
 function islandora_cwrc_writer_documents() {
   // We don't utilize this functionality currently. And as such
-  // 'editor/documents/%' is not implemented.
+  // 'editor/documents' is not implemented.
   drupal_json_output(array());
   drupal_exit();
 }
