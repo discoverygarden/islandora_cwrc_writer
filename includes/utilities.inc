@@ -164,6 +164,9 @@ function islandora_cwrc_writer_default_config() {
     'cwrcRootUrl' => url("$cwrc_writer_path/src/", array('absolute' => TRUE)),
     // The url in which we provide services for.
     'baseUrl' => url('cwrc/', array('absolute' => TRUE)),
+    // XML + RDF
+    'mode' => 0,
+    'allowOverlap' => true,
     // Custom to Islandora this allows use to populate the 'Documents' section
     // of the load dialog. The #documents theme variable will populate this at
     // run time.
