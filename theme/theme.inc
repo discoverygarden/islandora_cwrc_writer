@@ -177,7 +177,8 @@ function islandora_cwrc_writer_preprocess_audio_widget(array &$variables) {
 function islandora_cwrc_writer_preprocess_video_widget(array &$variables) {
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
-  $viewer_dsid = (stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE) ? 'OGG' : 'MP4';
+  $isChrome = stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE;
+  $viewer_dsid = ($isChrome && isset($object['OGG'])) ? 'OGG' : 'MP4';
   if (!isset($object[$viewer_dsid]) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object[$viewer_dsid])) {
     return;
   }
