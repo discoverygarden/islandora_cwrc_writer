@@ -61,6 +61,7 @@ function cwrcWriterInit($, Writer, Delegator) {
   config.id = 'editor';
   config.delegator = Delegator;
   config.mode = 'xml';
+  config.allowOverlap = false;
   config.buttons1 = 'schematags,editTag,removeTag,|,addperson,addplace,adddate,addorg,addcitation,addtitle,addcorrection,addkeyword,addlink';
   writer = new Writer(config);
   writer.event('writerInitialized').subscribe(doResize);

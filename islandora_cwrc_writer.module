@@ -203,6 +203,8 @@ function islandora_cwrc_writer_theme($existing, $type, $theme, $path) {
       'variables' => islandora_cwrc_writer_default_theme_variables(),
       'file' => 'theme/theme.inc',
     ),
+    // The note doesn't have all the same settings as the full CWRC-Writer, for
+    // instance overlapping entities is disabled and cannot be enabled.
     'islandora_cwrc_writer_note' => array(
       'template' => 'theme/islandora-cwrc-writer-note',
       'variables' => islandora_cwrc_writer_default_theme_variables(),
