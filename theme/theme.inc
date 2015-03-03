@@ -19,6 +19,7 @@ function theme_islandora_cwrc_writer_embedded(array $variables) {
  * Implements template_preprocess_islandora_cwrc_writer_iframe().
  */
 function template_preprocess_islandora_cwrc_writer_iframe(array &$variables) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   // Show the content in full screen.
   $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
   islandora_cwrc_record_new_resources_to_flag();
@@ -132,6 +133,7 @@ function islandora_cwrc_writer_preprocess_source_widget(array &$variables) {
  * Preprocess the theme variables to show audio source content.
  */
 function islandora_cwrc_writer_preprocess_audio_widget(array &$variables) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
   if (!isset($object['PROXY_MP3']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object['PROXY_MP3'])) {
@@ -175,6 +177,7 @@ function islandora_cwrc_writer_preprocess_audio_widget(array &$variables) {
  * Preprocess the theme variables to show video source content.
  */
 function islandora_cwrc_writer_preprocess_video_widget(array &$variables) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
   $isChrome = stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE;
@@ -206,6 +209,7 @@ function islandora_cwrc_writer_preprocess_video_widget(array &$variables) {
  * Preprocess the theme variables to show the image annotation widget.
  */
 function islandora_cwrc_writer_preprocess_image_annotation_widget(array &$variables) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   $object = islandora_object_load(reset($variables['sources']));
   // Add the tab for image annotations.
   $variables['western_tabs']['#links']['image_annotations'] = array(
@@ -233,6 +237,7 @@ function islandora_cwrc_writer_preprocess_image_annotation_widget(array &$variab
  * Implements template_preprocess_islandora_cwrc_writer_note().
  */
 function template_preprocess_islandora_cwrc_writer_note(array &$variables) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   islandora_cwrc_record_new_resources_to_flag();
   // Load the CWRC-Writer.
   libraries_load(ISLANDORA_CWRC_WRITER_LIB);
@@ -249,6 +254,7 @@ function template_preprocess_islandora_cwrc_writer_note(array &$variables) {
  * Implements template_preprocess_islandora_cwrc_writer_image_annotation().
  */
 function template_preprocess_islandora_cwrc_writer_image_annotation(array &$variables) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
   // Set preprocessor variables, for use in JavaScript.
@@ -344,6 +350,7 @@ function template_preprocess_islandora_cwrc_writer_image_annotation(array &$vari
  * Implements template_process_islandora_cwrc_writer_image_annotation().
  */
 function template_process_islandora_cwrc_writer_image_annotation(array &$variables) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   islandora_cwrc_record_new_resources_to_flag();
   $image_annotation_module_path = drupal_get_path('module', 'islandora_image_annotation');
   // All dialog's follow this format to get the CSS to work out.
