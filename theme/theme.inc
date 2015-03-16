@@ -134,6 +134,7 @@ function islandora_cwrc_writer_preprocess_source_widget(array &$variables) {
  */
 function islandora_cwrc_writer_preprocess_audio_widget(array &$variables) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
+  module_load_include('inc', 'islandora', 'includes/solution_packs');
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
   if (!isset($object['PROXY_MP3']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object['PROXY_MP3'])) {
@@ -178,6 +179,7 @@ function islandora_cwrc_writer_preprocess_audio_widget(array &$variables) {
  */
 function islandora_cwrc_writer_preprocess_video_widget(array &$variables) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
+  module_load_include('inc', 'islandora', 'includes/solution_packs');
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
   $isChrome = stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE;
