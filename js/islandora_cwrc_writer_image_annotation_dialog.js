@@ -125,7 +125,7 @@
                   // parameters are required. Except entityID, entityLabel, it also
                   // generates identifiers for the annotation and it's content.
                   annotation = that.createAnnotation(values);
-                  uuid = jQuery(annotation).children('div[about]').attr('about');
+                  uuid = jQuery(annotation).attr('about');
                   Drupal.IslandoraImageAnnotation.on('processedAnnotation', function (event, annotation) {
                     if (annotation.id === uuid) {
                       data.writer.tagger.finalizeEntity('textimagelink', {
