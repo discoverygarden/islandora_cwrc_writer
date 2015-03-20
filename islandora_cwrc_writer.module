@@ -71,13 +71,6 @@ function islandora_cwrc_writer_menu() {
       'type' => MENU_CALLBACK,
       'access callback' => TRUE,
     ),
-    'cwrc/editor/documents/%/schema' => array(
-      'page callback' => 'islandora_cwrc_writer_document_schema',
-      'page arguments' => array(3),
-      'file' => 'includes/document.inc',
-      'type' => MENU_CALLBACK,
-      'access callback' => TRUE,
-    ),
     // Mock end point has not 'real' affect.
     'cwrc/api/is_initialized' => array(
       'page callback' => 'islandora_cwrc_writer_cwrc_api_is_initialized',

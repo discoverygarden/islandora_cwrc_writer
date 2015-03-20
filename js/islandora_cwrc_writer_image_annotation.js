@@ -30,8 +30,43 @@ function cwrcWriterInit($, Writer, Delegator) {
   config.id = 'editor';
   config.delegator = Delegator;
   writer = new Writer(config);
-  // We have to replace the baseUrl after object construction since it is
-  // hard-coded.
+  /**
+   * Re-write the Delegator save to have schema info.
+   *
+   * @see Delegator.saveDocument
+   */
+  writer.delegator.saveDocument = function(docId, callback) {
+    var docText = writer.converter.getDocumentContent(true);
+    $.ajax({
+      url : writer.baseUrl+'editor/documents/'+docId,
+      type: 'PUT',
+      dataType: 'json',
+      data: {'doc':docText, 'schema':writer.schemaManager.schemas[writer.schemaManager.schemaId]['pid']},
+      success: function(data, status, xhr) {
+        writer.editor.isNotDirty = 1; // force clean state
+        writer.dialogManager.show('message', {
+          title: 'Document Saved',
+          msg: docId+' was saved successfully.'
+        });
+        window.location.hash = '#'+docId;
+        if (callback) {
+          callback.call(writer, true);
+        }
+        writer.event('documentSaved').publish();
+      },
+      error: function() {
+        writer.dialogManager.show('message', {
+          title: 'Error',
+          msg: 'An error occurred and '+docId+' was not saved.',
+          type: 'error'
+        });
+        if (callback) {
+          callback.call(writer, false);
+        }
+      }
+    });
+  };
+  // Replace the baseUrl after object construction since it's hard-coded.
   writer.baseUrl = config.baseUrl;
   // Hold onto a reference for safe keeping.
   Drupal.CWRCWriter.writer = writer;
@@ -39,18 +74,6 @@ function cwrcWriterInit($, Writer, Delegator) {
   writer.event('writerInitialized').subscribe(function (writer) {
     // When we change the schema we should update the document.
     writer.event('schemaChanged').subscribe(function (schemaId) {
-      $.ajax({
-        url: writer.baseUrl + 'editor/documents/' + writer.currentDocId +'/schema',
-        type: 'POST',
-        data: writer.schemaManager.schemas[schemaId],
-        error: function() {
-          writer.dialogManager.show('message', {
-            title: 'Error',
-            msg: 'An error occurred while trying to change the documents default schema.',
-            type: 'error'
-          });
-        }
-      });
       writer.schemaManager.loadSchema(schemaId, false, function() {
         var defaultTEI =
           '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +

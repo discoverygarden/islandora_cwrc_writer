@@ -75,34 +75,6 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
 }
 
 /**
- * Responds to the POST request to update the documents schema.
- *
- * Modifies and existing datastream, with the uploaded content, also adds a
- * processing instruction for the chosen schema.
- *
- * @param string $pid
- *   The PID of the object to fetch / modify.
- * @param string $dsid
- *   The DSID containing the document, right now assumed to be CWRC.
- */
-function islandora_cwrc_writer_document_schema($pid, $dsid = 'CWRC') {
-  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
-  // Need to get the version object which this page belongs to.
-  $object = islandora_object_load($pid);
-  if ($object) {
-    // For now we assume documents will be split across pages, rather than an
-    // complete object onto itself.
-    $rels = $object->relationships->get(FEDORA_RELS_EXT_URI, 'isMemberOf');
-    $parent_rels = reset($rels);
-    $parent_object = islandora_object_load($parent_rels['object']['value']);
-    $schema_object = islandora_object_load(filter_input(INPUT_POST, 'pid'));
-    islandora_cwrc_writer_set_document_schema($parent_object, $schema_object);
-  }
-  // Message isn't handled client side.
-  drupal_json_output(array('success' => TRUE));
-}
-
-/**
  * Responds to the PUT request to update the document datastream.
  *
  * Modifies and existing datastream, with the uploaded content, also adds a
@@ -116,13 +88,18 @@ function islandora_cwrc_writer_document_schema($pid, $dsid = 'CWRC') {
  */
 function islandora_cwrc_writer_update_document(AbstractDatastream $datastream) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
-  $temp_name = drupal_tempnam('public://', 'file');
-  $input = fopen('php://input', 'r');
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/document');
+
+  $put_data = array();
+  parse_str(file_get_contents("php://input"), $put_data);
+  islandora_cwrc_writer_set_document_schema(
+    $datastream->parent,
+    islandora_object_load($put_data['schema'])
+  );
+
+  $temp_name = drupal_tempnam(file_default_scheme() . '://', 'file');
   $temp = fopen($temp_name, 'w');
-  while ($data = fread($input, 1024)) {
-    fwrite($temp, $data);
-  }
-  fclose($input);
+  fwrite($temp, $put_data['doc']);
   fclose($temp);
   // We must remove the xml-model processing instruction from the file, it will
   // cause problems in other modules since it is not well supported by PHP
