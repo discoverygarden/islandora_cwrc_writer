@@ -6,19 +6,6 @@
  */
 
 /**
- * Menu callback that returns a JSON array which lists all document identifiers.
- *
- * We don't implement it in since we don't want the user to be able to load
- * every possible document from the same interface.
- */
-function islandora_cwrc_writer_documents() {
-  // We don't utilize this functionality currently. And as such
-  // 'editor/documents' is not implemented.
-  drupal_json_output(array());
-  drupal_exit();
-}
-
-/**
  * Endpoint for GET, PUT, DELETE requests from the CWRC-Writer for documents.
  *
  * @todo For now assume the datastream is always CWRC, but we should have a hook
