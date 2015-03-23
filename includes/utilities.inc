@@ -527,10 +527,22 @@ function islandora_cwrc_writer_get_document_default_schema_object() {
  *   The schema to use with the given document object.
  */
 function islandora_cwrc_writer_set_document_schema(AbstractObject $object, AbstractObject $schema) {
-  // Remove older relationships to the schema object.
-  $object->relationships->remove(ISLANDORA_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP);
-  // Add relationship to the given schema.
-  $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP, $schema->id);
+  // We prefer documents split across pages falling back to the current object.
+  $rels = $object->relationships->get(FEDORA_RELS_EXT_URI, 'isMemberOf');
+  $parent_rels = reset($rels);
+  $object_to_relate = $parent_rels ? islandora_object_load($parent_rels['object']['value']) : $object;
+  $relationships = $object_to_relate->relationships;
+  // Replace relationship to the given schema.
+  $relationships->autoCommit = FALSE;
+  $relationships->remove(
+    ISLANDORA_RELS_EXT_URI,
+    ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP
+  );
+  $relationships->add(
+    ISLANDORA_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP,
+    $schema->id
+  );
+  $relationships->commitRelationships();
 }
 
 /**
