@@ -25,18 +25,6 @@ function template_preprocess_islandora_cwrc_writer_iframe(array &$variables) {
   islandora_cwrc_record_new_resources_to_flag();
   drupal_add_css("$module_path/css/islandora_cwrc_writer.iframe.css");
   islandora_cwrc_flag_recorded_resources();
-  // Basically this is cause we can't dynamically set the baseUrl in
-  // CWRC-Writer/src/js/config.js. So we are forced to use the @data-main method
-  // as it will set the baseUrl to it's location.
-  $cwrc_writer_path = libraries_get_path(ISLANDORA_CWRC_WRITER_LIB);
-  $variables['cwrc'] = array(
-    'path' => $cwrc_writer_path,
-    // We render only require.js inline as it requires @data-main to be set.
-    'require' => array(
-      'config' => "$cwrc_writer_path/src/js/config.js",
-      'js' => "$cwrc_writer_path/src/js/lib/require/require.js",
-    ),
-  );
 }
 
 /**
@@ -182,8 +170,8 @@ function islandora_cwrc_writer_preprocess_video_widget(array &$variables) {
   module_load_include('inc', 'islandora', 'includes/solution_packs');
   islandora_cwrc_record_new_resources_to_flag();
   $object = islandora_object_load(reset($variables['sources']));
-  $isChrome = stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE;
-  $viewer_dsid = ($isChrome && isset($object['OGG'])) ? 'OGG' : 'MP4';
+  $is_chrome = stristr($_SERVER['HTTP_USER_AGENT'], 'chrome') !== FALSE;
+  $viewer_dsid = ($is_chrome && isset($object['OGG'])) ? 'OGG' : 'MP4';
   if (!isset($object[$viewer_dsid]) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object[$viewer_dsid])) {
     return;
   }
@@ -426,7 +414,17 @@ function template_process_islandora_cwrc_writer_text_image_link_dialog(array &$v
  */
 function _template_preprocess_islandora_cwrc_writer_schema_settings(array &$variables) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
-  // Load the contextual information like the settings and our init function.
-  $variables['settings']['schemas'] = array_merge($variables['settings']['schemas'], islandora_cwrc_writer_get_schemas());
+  // Combine the provided schemas with ones discovered in the RI.
+  $variables['settings']['schemas'] = $variables['settings']['schemas'] + islandora_cwrc_writer_get_schemas();
+  // Get the PIDs of the default schemas.
+  $config = islandora_cwrc_writer_default_config();
+  $pids = array();
+  foreach ($config['schemas'] as $schema) {
+    $pid = $schema['pid'];
+    $pids[$pid] = TRUE;
+  }
+  // Remove duplicate references to the default schemas.
+  $variables['settings']['schemas'] = array_diff_key($variables['settings']['schemas'], $pids);
+  // Remove duplicate references to the non default schemas.
   $variables['settings']['schemas'] = array_unique($variables['settings']['schemas'], SORT_REGULAR);
 }
