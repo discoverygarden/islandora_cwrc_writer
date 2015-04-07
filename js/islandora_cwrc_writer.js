@@ -19,18 +19,10 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
   // the.
   Drupal.behaviors.cwrcWriterLoad = {
     attach: function (context, settings) {
-      var script;
-      if ($('script[data-main]').length === 0) {
-        // We have to set the height explicitly since the CWRC-Writer assumes it
-        // has the full body.
-        $('#cwrc_wrapper').height(1000);
-        // We can't use jQuery to create the element since all of jQuery's
-        // insertion methods use a domManip function.
-        script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = '/sites/all/libraries/CWRC-Writer/src/js/lib/require/require.js';
-        script.setAttribute('data-main', '/sites/all/libraries/CWRC-Writer/src/js/config.js');
-        document.head.appendChild(script);
+      // We have to set the height explicitly since the CWRC-Writer assumes it
+      // has the full body.
+      if(!window.frameElement) {
+	$('#cwrc_wrapper').height(1000);
       }
     }
   };
@@ -39,17 +31,18 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
   // documents.
   Drupal.behaviors.cwrcWriterDocumentSelect = {
     attach: function (context, settings) {
-      // @todo use once here.
-      var $select = $('#islandora-cwrc-document-select');
-      if (!$select.hasClass('processed')) {
-        // Any time this element changes reload the document.
-        $select.change(function (e) {
-          if (Drupal.CWRCWriter.writer !== undefined) {
-            Drupal.CWRCWriter.writer.fileManager.loadDocument($('option:selected', this).val());
-          }
-        });
-        $select.addClass('processed');
-      }
+      $('#islandora-cwrc-document-select', context).once('islandora-cwrc-writer-select-document', function () {
+	var $select = $(this);
+	if (!$select.hasClass('processed')) {
+          // Any time this element changes reload the document.
+          $select.change(function (e) {
+            if (Drupal.CWRCWriter.writer !== undefined) {
+              Drupal.CWRCWriter.writer.fileManager.loadDocument($('option:selected', this).val());
+            }
+          });
+          $select.addClass('processed');
+	}
+      });
     }
   };
   // This handle the navigation links, and makes use of the select field for
@@ -104,9 +97,10 @@ function cwrcWriterInit($, Writer, Delegator) {
   CwrcApi = Drupal.CWRCWriter.api.CwrcApi;
 
   config = Drupal.settings.CWRCWriter;
-  config.id = 'editor';
+  config.id = config.id || 'editor';
   config.delegator = Delegator;
   writer = new Writer(config);
+  writer.init(config.id);
   /**
    * Re-write the Delegator save to have schema info.
    *
@@ -149,9 +143,8 @@ function cwrcWriterInit($, Writer, Delegator) {
   Drupal.CWRCWriter.writer = writer;
   writer.event('writerInitialized').subscribe(function (writer) {
     // When we change the schema we should update the document.
-    writer.event('schemaChanged').subscribe(function (schemaId) {
-      writer.schemaManager.loadSchema(schemaId, false, function() {
-        var defaultTEI =
+    writer.event('schemaLoaded').subscribe(function () {
+      var defaultTEI =
           '<TEI xmlns="http://www.tei-c.org/ns/1.0">' +
           '<teiHeader>' +
           '<fileDesc>' +
@@ -170,32 +163,36 @@ function cwrcWriterInit($, Writer, Delegator) {
           '<body><p>Paste or type your text here</p></body>' +
           '</text>' +
           '</TEI>';
-        var defaultXML;
-        var root;
-        var defaultDoc;
-        var doc;
-        var parser = new DOMParser();
-        // We have to parse as HTML as HTML entities will break XML parsing in
-        // firefox.
-        doc = parser.parseFromString(writer.editor.getContent(), 'text/html');
-        // Embeds the document in the body tag.
-        root = doc.body.firstElementChild.getAttribute('_tag');
-        switch (writer.root) {
-          case 'TEI':
-            if (root !== 'TEI') {
-              defaultDoc = parser.parseFromString(defaultTEI, 'text/xml');
-              writer.converter.doProcessing(defaultDoc);
-            }
-            break;
-          default:
-            if (root !== writer.root) {
-              defaultXML = '<'+ writer.root + '></'+ writer.root + '>';
-              defaultDoc = parser.parseFromString(defaultXML, 'text/xml');
-              writer.converter.doProcessing(defaultDoc);
-            }
-            break;
+      var defaultXML;
+      var root;
+      var defaultDoc;
+      var doc;
+      var parser = new DOMParser();
+      var content = writer.editor.getContent();
+      // Only reload content if there is actually content.
+      if (content === '') {
+        return;
+      }
+      // We have to parse as HTML as HTML entities will break XML parsing in
+      // firefox.
+      doc = parser.parseFromString(content, 'text/html');
+      // Embeds the document in the body tag.
+      root = doc.body.firstElementChild.getAttribute('_tag');
+      switch (writer.root) {
+      case 'TEI':
+        if (root !== 'TEI') {
+          defaultDoc = parser.parseFromString(defaultTEI, 'text/xml');
+          writer.converter.doProcessing(defaultDoc);
         }
-      });
+        break;
+      default:
+        if (root !== writer.root) {
+          defaultXML = '<'+ writer.root + '></'+ writer.root + '>';
+          defaultDoc = parser.parseFromString(defaultXML, 'text/xml');
+          writer.converter.doProcessing(defaultDoc);
+        }
+        break;
+      }
     });
     // load modules then do the setup
     require(['jquery', 'modules/entitiesList', 'modules/relations', 'modules/selection',
@@ -233,3 +230,26 @@ function cwrcWriterInit($, Writer, Delegator) {
       });
   });
 }
+
+// Set the baseUrl, which will be used to load all the required javascript documents.
+require.config({baseUrl: '/sites/all/libraries/CWRC-Writer/src/js'});
+
+// Load required jQuery in noConflict mode.
+define('jquery-private', ['jquery'], function ($) {
+  return $.noConflict(true);
+});
+
+// Get required jQuery and initialize the CWRC-Writer.
+require(['jquery', 'knockout'], function($, knockout) {
+  window.ko = knockout; // requirejs shim isn't working for knockout
+
+  require(['writer',
+           'delegator',
+           'jquery.layout',
+           'jquery.tablayout'
+          ], function(Writer, Delegator) {
+            $(function() {
+              cwrcWriterInit.call(window, $, Writer, Delegator);
+            });
+          });
+});

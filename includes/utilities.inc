@@ -164,9 +164,9 @@ function islandora_cwrc_writer_default_config() {
     'cwrcRootUrl' => url("$cwrc_writer_path/src/", array('absolute' => TRUE)),
     // The url in which we provide services for.
     'baseUrl' => url('cwrc/', array('absolute' => TRUE)),
-    // XML + RDF
+    // XML + RDF.
     'mode' => 0,
-    'allowOverlap' => true,
+    'allowOverlap' => TRUE,
     // Custom to Islandora this allows use to populate the 'Documents' section
     // of the load dialog. The #documents theme variable will populate this at
     // run time.
@@ -193,24 +193,43 @@ function islandora_cwrc_writer_default_config() {
         'name' => 'CWRC Basic TEI Schema',
         'url' => url('islandora/object/cwrc:teiSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:teiSchema/datastream/CSS/view', array('absolute' => TRUE)),
+        'aliases' => array(
+          'http://cwrc.ca/schema/CWRC-TEIBasic.rng',
+          'http://cwrc.ca/schemas/cwrc_tei_lite.rng',
+        ),
+        'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_TEI,
       ),
       'events' => array(
         'pid' => 'cwrc:eventsSchema',
         'name' => 'CWRC Events Schema',
         'url' => url('islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:eventsSchema/datastream/CSS/view', array('absolute' => TRUE)),
+        'aliases' => array('http://cwrc.ca/schemas/orlando_event.rng'),
+        'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
       'biography' => array(
         'pid' => 'cwrc:biographySchema',
         'name' => 'CWRC Biography Schema',
         'url' => url('islandora/object/cwrc:biographySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:biographySchema/datastream/CSS/view', array('absolute' => TRUE)),
+        'aliases' => array('http://cwrc.ca/schemas/orlando_biography.rng'),
+        'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
       'writing' => array(
         'pid' => 'cwrc:writingSchema',
         'name' => 'CWRC Writing Schema',
         'url' => url('islandora/object/cwrc:writingSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:writingSchema/datastream/CSS/view', array('absolute' => TRUE)),
+        'aliases' => array('http://cwrc.ca/schemas/orlando_writing.rng'),
+        'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
+      ),
+      'entry' => array(
+        'pid' => 'cwrc:entrySchema',
+        'name' => 'CWRC Entry Schema',
+        'url' => url('islandora/object/cwrc:entrySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
+        'cssUrl' => url('islandora/object/cwrc:entrySchema/datastream/CSS/view', array('absolute' => TRUE)),
+        'aliases' => array('http://cwrc.ca/schemas/cwrc_entry.rng'),
+        'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ENTRY,
       ),
     ),
   );
@@ -464,6 +483,11 @@ function islandora_cwrc_writer_get_schema_url(AbstractObject $object) {
  */
 function islandora_cwrc_writer_get_document_schema_pid(AbstractObject $object) {
   // Check if the object has a 'hasSchema' relationship.
+  $relationship = $object->relationships->get(CWRC_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP);
+  if ($relationship) {
+    return $relationship[0]['object']['value'];
+  }
+  // Backwards compatiablity.
   $relationship = $object->relationships->get(ISLANDORA_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP);
   if ($relationship) {
     return $relationship[0]['object']['value'];
@@ -508,6 +532,116 @@ function islandora_cwrc_writer_get_document_schema_object(AbstractObject $object
 }
 
 /**
+ * Returns a list of valid schema mappings.
+ *
+ * @return array
+ *   The valid mappings for schema.
+ */
+function islandora_cwrc_writer_get_valid_schema_mappings() {
+  return array(
+    ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_TEI,
+    ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
+    ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ENTRY,
+  );
+}
+
+/**
+ * Returns a list of valid schema mappings.
+ *
+ * @return array
+ *   The valid mappings for schema.
+ */
+function islandora_cwrc_writer_is_valid_schema_mapping($mapping) {
+  $valid_mappings = islandora_cwrc_writer_get_valid_schema_mappings();
+  return in_array($mapping, $valid_mappings);
+}
+
+/**
+ * Gets the mapping from the given schema object if defined.
+ *
+ * The mapping is used to determine what elements and dialog boxes the
+ * CWRC-Writer will use.
+ *
+ * @param AbstractObject $schema
+ *   The schema object to check.
+ *
+ * @return string|bool
+ *   The mapping if the given schema defines one, FALSE otherwise.
+ *   The valid values for a mapping are: 'tei', 'orlando', 'cwrcEntry'.
+ */
+function islandora_cwrc_writer_get_schema_mapping(AbstractObject $schema) {
+  // Check if the object has a 'hasSchemaMapping' relationship.
+  $relationship = $schema->relationships->get(CWRC_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_RELATIONSHIP);
+  if ($relationship) {
+    return $relationship[0]['object']['value'];
+  }
+  return FALSE;
+}
+
+/**
+ * Sets the given Schema objects mapping.
+ *
+ * @param AbstractObject $schema
+ *   The schema object to whose mapping will be set.
+ *
+ * @param string $mapping
+ *   The mapping to use, expected to be valid mapping.
+ */
+function islandora_cwrc_writer_set_schema_mapping(AbstractObject $schema, $mapping) {
+  if (islandora_cwrc_writer_is_valid_schema_mapping($mapping)) {
+    $relationships = $schema->relationships;
+    $relationships->autoCommit = FALSE;
+    if (islandora_cwrc_writer_get_schema_mapping($schema) !== FALSE) {
+      $relationships->remove(CWRC_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_RELATIONSHIP);
+    }
+    $relationships->registerNamespace('cwrc', CWRC_RELS_EXT_URI);
+    $relationships->add(CWRC_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_RELATIONSHIP, $mapping, RELS_TYPE_PLAIN_LITERAL);
+    $relationships->commitRelationships();
+  }
+}
+
+/**
+ * Guesses the mapping from the given schema file.
+ *
+ * We can't know for sure what schema we're dealing with so we guess based on
+ * the namespace or root element and hope for the best.
+ *
+ * The mapping is used to determine what elements and dialog boxes the
+ * CWRC-Writer will use. It is a requirement for the CWRC-Writer to function.
+ *
+ * @param string $file
+ *   The schema file to check.
+ *
+ * @return string|bool
+ *   The mapping if we can guess it, FALSE otherwise. The valid values for a
+ *   mapping are: 'tei', 'orlando', 'cwrcEntry'.
+ */
+function islandora_cwrc_writer_guess_schema_mapping_from_schema($file) {
+  $doc = new DOMDocument();
+  $doc->load($file);
+  // TEI RNG schemas are expected to declare their namespace.
+  if ($doc->documentElement->hasAttribute('ns')) {
+    $namespace = $doc->documentElement->getAttribute('ns');
+    if ($namespace === 'http://www.tei-c.org/ns/1.0') {
+      return ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_TEI;
+    }
+  }
+  // Orlando.
+  $xpath = new DOMXPath($doc);
+  $xpath->registerNamespace('rng', 'http://relaxng.org/ns/structure/1.0');
+  $results = $xpath->query('//rng:start/rng:element[@name="BIOGRAPHY" or @name="EVENTS" or @name="WRITING"]');
+  if ($results->length !== 0) {
+    return ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO;
+  }
+  // CWRC Entry.
+  $results = $xpath->query('//rng:start/rng:choice/rng:element[@name="CWRC"]');
+  if ($results->length !== 0) {
+    return ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ENTRY;
+  }
+  return FALSE;
+}
+
+/**
  * Gets the default schema object for validating documents.
  *
  * @return AbstractObject
@@ -535,11 +669,17 @@ function islandora_cwrc_writer_set_document_schema(AbstractObject $object, Abstr
   // Replace relationship to the given schema.
   $relationships->autoCommit = FALSE;
   $relationships->remove(
+    CWRC_RELS_EXT_URI,
+    ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP
+  );
+  // Backwards compatiablity.
+  $relationships->remove(
     ISLANDORA_RELS_EXT_URI,
     ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP
   );
+  $relationships->registerNamespace('cwrc', CWRC_RELS_EXT_URI);
   $relationships->add(
-    ISLANDORA_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP,
+    CWRC_RELS_EXT_URI, ISLANDORA_CWRC_WRITER_SCHEMA_RELATIONSHIP,
     $schema->id
   );
   $relationships->commitRelationships();
@@ -733,21 +873,20 @@ function islandora_cwrc_writer_create_domdocument() {
  *   - name: The label / name of the schema.
  *   - url: An absolute URL to the RNG schema file.
  *   - cssUrl: An absolute URL to the CSS file.
- *   - xsltUrl: An absolute URL to the XSLT file. (optional)
+ *   - schemaMappingsId: Indicates what mapping to use in the CWRC-Writer.
  */
 function islandora_cwrc_writer_get_schemas() {
   $content_model = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
+  $cwrc_namespace = CWRC_RELS_EXT_URI;
   $query = <<<EOT
+  PREFIX cwrc: <$cwrc_namespace>
   PREFIX fedora-model: <info:fedora/fedora-system:def/model#>
   PREFIX fedora-view: <info:fedora/fedora-system:def/model#>
-  SELECT ?pid ?label ?disseminationType
+  SELECT ?pid ?label ?mapping
   WHERE {
     ?pid <fedora-model:hasModel> <info:fedora/$content_model> .
     ?pid <fedora-model:label> ?label .
-    OPTIONAL {
-      ?disseminationType <fedora-view:disseminationType> <info:fedora/*/XSLT> .
-      ?pid <fedora-view:disseminates> ?disseminationType
-    }
+    ?pid <cwrc:hasSchemaMapping> ?mapping .
   }
 EOT;
   $connection = islandora_get_tuque_connection();
@@ -755,10 +894,10 @@ EOT;
   $schemas = array();
   foreach ($results as $result) {
     $pid = $result['pid']['value'];
-    $has_xslt = !empty($result['disseminationType']['value']);
     $schema = array(
-      'pid' => $result['pid']['value'],
+      'pid' => $pid,
       'name' => $result['label']['value'],
+      'schemaMappingsId' => $result['mapping']['value'],
       'url' => url("islandora/object/{$pid}/datastream/SCHEMA/view", array(
         'absolute' => TRUE,
       )),
@@ -766,12 +905,6 @@ EOT;
         'absolute' => TRUE,
       )),
     );
-    // XSLT datastreams are optional.
-    if ($has_xslt) {
-      $schema['xsltUrl'] = url("islandora/object/{$pid}/datastream/XSLT/view", array(
-        'absolute' => TRUE,
-      ));
-    }
     $schemas[$pid] = $schema;
   }
   return $schemas;

@@ -31,12 +31,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <title>CWRC-Writer</title>
     <?php print $scripts; ?>
-    <!--
-    We render only require.js inline as it requires data-main to be set
-    and we can't do that with the normal drupal_add_js() functions. And we have
-    to do this cause of funky hardcoded pathing in the CWRC-Writer.
-    -->
-    <script type="text/javascript" data-main="<?php print "/{$cwrc['require']['config']}"; ?>" src="<?php print "/{$cwrc['require']['js']}"; ?>"></script>
     <?php print $styles; ?>
   </head>
   <body>

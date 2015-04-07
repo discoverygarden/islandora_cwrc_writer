@@ -113,6 +113,23 @@ EOT;
  * @param array $form_state
  *   The drupal form state.
  */
+function islandora_cwrc_writer_schema_upload_form_validate(array $form, array &$form_state) {
+  $rng_file = file_load($form_state['values']['rng_file']);
+  $rng_path = drupal_realpath($rng_file->uri);
+  $mapping = islandora_cwrc_writer_guess_schema_mapping_from_schema($rng_path);
+  if ($mapping === FALSE) {
+    form_set_error('rng_file', t('The schema given does not match any valid CWRC-Writer mapping.'));
+  }
+}
+
+/**
+ * Adds the uploaded files to the ingestible object.
+ *
+ * @param array $form
+ *   The drupal form.
+ * @param array $form_state
+ *   The drupal form state.
+ */
 function islandora_cwrc_writer_schema_upload_form_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   $object = islandora_ingest_form_get_object($form_state);
@@ -128,6 +145,10 @@ function islandora_cwrc_writer_schema_upload_form_submit(array $form, array &$fo
   $rng_file = file_load($form_state['values']['rng_file']);
   $rng_path = drupal_realpath($rng_file->uri);
   $ds->setContentFromFile($rng_path, FALSE);
+
+  $mapping = islandora_cwrc_writer_guess_schema_mapping_from_schema($rng_path);
+  islandora_cwrc_writer_set_schema_mapping($object, $mapping);
+
   if ($ds->label !== $rng_file->filename) {
     $ds->label = $rng_file->filename;
   }
