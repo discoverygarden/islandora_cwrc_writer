@@ -251,26 +251,3 @@ function cwrcWriterInit($, Writer, Delegator) {
       });
   });
 }
-
-// Set the baseUrl, which will be used to load all the required javascript documents.
-require.config({baseUrl: '/sites/all/libraries/CWRC-Writer/src/js'});
-
-// Load required jQuery in noConflict mode.
-define('jquery-private', ['jquery'], function ($) {
-  return $.noConflict(true);
-});
-
-// Get required jQuery and initialize the CWRC-Writer.
-require(['jquery', 'knockout'], function($, knockout) {
-  window.ko = knockout; // requirejs shim isn't working for knockout
-
-  require(['writer',
-           'delegator',
-           'jquery.layout',
-           'jquery.tablayout'
-          ], function(Writer, Delegator) {
-            $(function() {
-              cwrcWriterInit.call(window, $, Writer, Delegator);
-            });
-          });
-});
