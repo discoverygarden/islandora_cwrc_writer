@@ -22,14 +22,14 @@
       <!-- The title is hard coded to "Text image annotation" -->
       <input name="title" type="text" style="display: none;" value="" />
       <label><?php print t('Type:'); ?></label>
-      <input name="type" type="text" size="28" />
+      <?php print $type; ?>
       <div class="color">
         <label><?php print t('Color:'); ?></label>
         <input name="color" type="hidden" value="#91843c" class="color-picker" size="7" />
       </div>
       <div class="stroke">
         <label><?php print t('Stroke Width:'); ?></label>
-        <input name="stroke" type="text" size="5" value=".3" />
+        <?php print $stroke_width; ?>
       </div>
       <!-- The Annotation is coded to be the highlighted text. -->
       <textarea name="text" style="display: none;" cols="40" rows="5"></textarea>
