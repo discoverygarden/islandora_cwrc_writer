@@ -308,7 +308,7 @@ function template_preprocess_islandora_cwrc_writer_image_annotation(array &$vari
       'islandoraImageAnnotationDialog' => array(
         'pid' => $source->id,
         'categories' => islandora_image_annotation_get_categories($source),
-        'enforceTaxonomy' => variable_get('islandora_annotation_enforce_taxonomy', TRUE),
+        'enforceTaxonomy' => variable_get('islandora_image_annotation_enforce_taxonomy', TRUE),
         'allowEntityLinking' => variable_get('islandora_image_annotation_use_entity_tagging', TRUE),
         'useTitleVocabulary' => variable_get('islandora_image_annotation_use_title_vocabulary', FALSE),
         'strokeWidths' => variable_get('islandora_image_annotation_stroke_width', '.3 .6 .9 1.2 1.5'),
