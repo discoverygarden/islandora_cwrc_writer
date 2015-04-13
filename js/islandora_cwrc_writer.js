@@ -14,17 +14,39 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
 (function ($) {
   'use strict';
 
-  // Triggers the loading of CWRC-Writer if the script is not present, we do
-  // this as a behaviour as Drupal doesn't allow us to set data attributes with
-  // the.
+  // Triggers the loading of CWRC-Writer.
   Drupal.behaviors.cwrcWriterLoad = {
     attach: function (context, settings) {
       // We have to set the height explicitly since the CWRC-Writer assumes it
       // has the full body.
       if(!window.frameElement) {
-	$('#cwrc_wrapper').height(1000);
+        $('#cwrc_wrapper').height(1000);
       }
-    }
+      // Set the baseUrl, which will be used to load all the required javascript documents.
+      require.config({
+        baseUrl: settings.CWRCWriter.cwrcRootUrl + 'js',
+      });
+
+      // Load required jQuery in noConflict mode.
+      define('jquery-private', ['jquery'], function ($) {
+        return $.noConflict(true);
+      });
+
+      // Get required jQuery and initialize the CWRC-Writer.
+      require(['jquery', 'knockout'], function($, knockout) {
+        window.ko = knockout; // requirejs shim isn't working for knockout
+
+        require(['writer',
+                 'delegator',
+                 'jquery.layout',
+                 'jquery.tablayout'
+                ], function(Writer, Delegator) {
+                  $(function() {
+                    cwrcWriterInit.call(window, $, Writer, Delegator);
+                  });
+                });
+      });
+   }
   };
 
   // Attach behavior to the select field in the header so the user can change
@@ -79,6 +101,7 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
       }
     }
   };
+
 }(jQuery));
 
 /**
@@ -230,26 +253,3 @@ function cwrcWriterInit($, Writer, Delegator) {
       });
   });
 }
-
-// Set the baseUrl, which will be used to load all the required javascript documents.
-require.config({baseUrl: '/sites/all/libraries/CWRC-Writer/src/js'});
-
-// Load required jQuery in noConflict mode.
-define('jquery-private', ['jquery'], function ($) {
-  return $.noConflict(true);
-});
-
-// Get required jQuery and initialize the CWRC-Writer.
-require(['jquery', 'knockout'], function($, knockout) {
-  window.ko = knockout; // requirejs shim isn't working for knockout
-
-  require(['writer',
-           'delegator',
-           'jquery.layout',
-           'jquery.tablayout'
-          ], function(Writer, Delegator) {
-            $(function() {
-              cwrcWriterInit.call(window, $, Writer, Delegator);
-            });
-          });
-});

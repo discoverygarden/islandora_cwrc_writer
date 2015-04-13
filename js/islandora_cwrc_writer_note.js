@@ -4,7 +4,47 @@
  * @file
  * Loads the embbeded CWRC-Writer for creating notes inside of the CWRC-Writer.
  */
-var writer = null;
+/**
+ * CWRC-Writer global callback used to configure the CWRC-Writer.
+ *
+ * @param Writer
+ * @param Delegator
+ */
+(function ($) {
+  'use strict';
+
+  // Triggers the loading of CWRC-Writer.
+  Drupal.behaviors.cwrcWriterLoad = {
+    attach: function (context, settings) {
+      // Set the baseUrl, which will be used to load all the required javascript documents.
+      require.config({
+        baseUrl: settings.CWRCWriter.cwrcRootUrl + 'js',
+      });
+
+      // Load required jQuery in noConflict mode.
+      define('jquery-private', ['jquery'], function ($) {
+        return $.noConflict(true);
+      });
+
+      // Get required jQuery and initialize the CWRC-Writer.
+      require(['jquery', 'knockout'], function($, knockout) {
+        window.ko = knockout; // requirejs shim isn't working for knockout
+
+        require(['writer',
+                 'delegator',
+                 'jquery.layout',
+                 'jquery.tablayout'
+                ], function(Writer, Delegator) {
+                  $(function() {
+                    cwrcWriterInit.call(window, $, Writer, Delegator);
+                  });
+                });
+      });
+    }
+  };
+
+}(jQuery));
+
 /**
  * CWRC-Writer global callback used to configure the CWRC-Writer.
  *
@@ -12,6 +52,7 @@ var writer = null;
  * @param Writer
  * @param Delegator
  */
+var writer = null;
 // @ignore style_camel_case:function
 function cwrcWriterInit($, Writer, Delegator) {
   'use strict';
@@ -75,26 +116,3 @@ function cwrcWriterInit($, Writer, Delegator) {
     });
   });
 }
-
-// Set the baseUrl, which will be used to load all the required javascript documents.
-require.config({baseUrl: '/sites/all/libraries/CWRC-Writer/src/js'});
-
-// Load required jQuery in noConflict mode.
-define('jquery-private', ['jquery'], function ($) {
-  return $.noConflict(true);
-});
-
-// Get required jQuery and initialize the CWRC-Writer.
-require(['jquery', 'knockout'], function($, knockout) {
-  window.ko = knockout; // requirejs shim isn't working for knockout
-
-  require(['writer',
-           'delegator',
-           'jquery.layout',
-           'jquery.tablayout'
-          ], function(Writer, Delegator) {
-            $(function() {
-              cwrcWriterInit.call(window, $, Writer, Delegator);
-            });
-          });
-});
