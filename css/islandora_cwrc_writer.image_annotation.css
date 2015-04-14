@@ -36,3 +36,7 @@ li.textimagelink:hover {
 li.textimagelink .box {
   background-color: #818167 !important;
 }
+
+li.textimagelink.selected {
+  background-color: #818167 !important;
+}
