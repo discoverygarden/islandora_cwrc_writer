@@ -28,3 +28,15 @@
 .entitiesList .textimagelink.selected, .entitiesList .textimagelink.selected .box {
   background-color: #7F00FF;
 }
+
+li.textimagelink:hover {
+  background-color: #818167 !important;
+}
+
+li.textimagelink .box {
+  background-color: #818167 !important;
+}
+
+li.textimagelink.selected {
+  background-color: #818167 !important;
+}
