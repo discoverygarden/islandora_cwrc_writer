@@ -25,7 +25,7 @@
 .entitiesList .textimagelink .box, .entitiesList .textimagelink.over {
   background-color: #7F00FF;
 }
-.entitiesList .textimagelink.selected, .entitiesList .textimagelink.selected .box {d
+.entitiesList .textimagelink.selected, .entitiesList .textimagelink.selected .box {
   background-color: #7F00FF;
 }
 
