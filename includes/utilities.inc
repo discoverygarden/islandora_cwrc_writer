@@ -618,7 +618,10 @@ function islandora_cwrc_writer_set_schema_mapping(AbstractObject $schema, $mappi
  */
 function islandora_cwrc_writer_guess_schema_mapping_from_schema($file) {
   $doc = new DOMDocument();
-  $doc->load($file);
+  $loaded =  @$doc->load($file);
+  if (!$loaded) {
+    return FALSE;
+  }
   // TEI RNG schemas are expected to declare their namespace.
   if ($doc->documentElement->hasAttribute('ns')) {
     $namespace = $doc->documentElement->getAttribute('ns');
