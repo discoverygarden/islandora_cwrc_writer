@@ -174,6 +174,7 @@ function islandora_cwrc_writer_default_config() {
     'cwrcDialogs' => array(
       'cwrcApiUrl' => url('cwrc/api', array('absolute' => TRUE)),
       'geonameUrl' => url('geonames', array('absolute' => TRUE)),
+      'googleGeocodeUrl' => url('http://maps.googleapis.com/maps/api/geocode/xml', array('absolute' => TRUE, 'external' => TRUE)),
       'viafUrl' => url('viaf', array('absolute' => TRUE)),
       'schemas' => array(
         'person' => 'http://cwrc.ca/schemas/entities.rng',
