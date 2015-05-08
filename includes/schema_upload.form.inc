@@ -330,7 +330,7 @@ function _islandora_cwrc_writer_schema_create_managed(AbstractObject $object, ar
 }
 
 /**
- * Creates a schema object where it's datastreams are managed.
+ * Creates a schema object where it's datastreams are external.
  *
  * @param AbstractObject $object
  *   The object to attach the schema / css files to.
