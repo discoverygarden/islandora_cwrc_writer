@@ -30,18 +30,18 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
   $css_file_prefix = NULL;
   if ($pluploader_enabled) {
     $title_display = 'invisible';
-    $rng_file_prefix = theme('form_element_label', array('element' => array(
-                           '#id' => 'edit-rng-file',
-                           '#title' => t('RNG File'),
-                           '#title_display' => 'before',
-                           '#required' => TRUE,
-                         )));
-    $css_file_prefix = theme('form_element_label', array('element' => array(
-                           '#id' => 'edit-css-file',
-                           '#title' => t('CSS File'),
-                           '#title_display' => 'before',
-                           '#required' => TRUE,
-                         )));
+    $rng_file_prefix = theme('form_element_label', array(
+                            'element' => array(
+                              '#id' => 'edit-rng-file',
+                              '#title' => t('RNG File'),
+                              '#title_display' => 'before',
+                              '#required' => TRUE)));
+    $css_file_prefix = theme('form_element_label', array(
+                            'element' => array(
+                              '#id' => 'edit-css-file',
+                              '#title' => t('CSS File'),
+                              '#title_display' => 'before',
+                              '#required' => TRUE)));
   }
   return array(
     'label' => array(
@@ -66,7 +66,8 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
       '#type' => 'fieldset',
       '#description' => t('A managed schema is useful in that it provides a stronger guarantee that it will be available also any changes to it can be tracked and managed over time within the repository.'),
       'rng_file' => array(
-        // This is a hack to get around that pluploader doesn't display #required.
+        // This is a hack to get around that pluploader doesn't
+        // display #required.
         '#prefix' => $rng_file_prefix,
         '#title_display' => $title_display,
         // End hack.
@@ -82,7 +83,8 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
         ),
       ),
       'css_file' => array(
-        // This is a hack to get around that pluploader doesn't display #required.
+        // This is a hack to get around that pluploader doesn't
+        // display #required.
         '#prefix' => $css_file_prefix,
         '#title_display' => $title_display,
         // End hack.
@@ -98,7 +100,7 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
         ),
       ),
       '#states' => array(
-        'visible' => array(   // action to take.
+        'visible' => array(
           ':input[name=location]' => array('value' => 'managed'),
         ),
       ),
@@ -129,7 +131,7 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
         ),
       ),
       '#states' => array(
-        'visible' => array(   // action to take.
+        'visible' => array(
           ':input[name=location]' => array('value' => 'external'),
         ),
       ),
@@ -225,7 +227,7 @@ function _islandora_cwrc_writer_schema_get_file_from_url($url) {
     file_unmanaged_delete($filename);
     return FALSE;
   }
-  else if (file_put_contents($filename, $content) === FALSE) {
+  elseif (file_put_contents($filename, $content) === FALSE) {
     file_unmanaged_delete($filename);
     return FALSE;
   }
