@@ -63,6 +63,36 @@ function islandora_cwrc_writer_admin_settings_form(array $form, array &$form_sta
       '#description' => t('The PID of the collection in which to add new <strong>place</strong> entity objects.'),
       '#element_validate' => array('islandora_cwrc_writer_admin_settings_form_validate_collection_pid'),
     ),
+    'islandora_cwrc_writer_cwrc_api_url' => array(
+      '#type' => 'textfield',
+      '#title' => t('CWRC API URL'),
+      '#description' => t('This REST end point is used for creating/editing/searching for entities.'),
+      '#default_value' => variable_get('islandora_cwrc_writer_cwrc_api_url', 'cwrc/api'),
+    ),
+    'islandora_cwrc_writer_geo_names_url' => array(
+      '#type' => 'textfield',
+      '#title' => t('GeoNames URL'),
+      '#description' => t(
+        'This REST end point is used for searching the <a href="@url">GeoNames Service</a>.',
+        array('@url' => url('https://github.com/cwrc/CWRC-Mapping-Timelines-Project/tree/master/geonames'))
+      ),
+      '#default_value' => variable_get('islandora_cwrc_writer_geo_names_url', 'geonames'),
+    ),
+    'islandora_cwrc_writer_google_geocode_url' => array(
+      '#type' => 'textfield',
+      '#title' => t('Google Geocode URL'),
+      '#description' => t('This REST end point is used for searching the Google Geocode database.'),
+      '#default_value' => variable_get('islandora_cwrc_writer_google_geocode_url', 'http://maps.googleapis.com/maps/api/geocode/xml'),
+    ),
+    'islandora_cwrc_writer_viaf_url' => array(
+      '#type' => 'textfield',
+      '#title' => t('VIAF URL'),
+      '#description' => t(
+        'This REST end point is used for searching <a href="@url">The Virtual International Authority File</a> database.',
+        array('@url' => url('https://viaf.org/'))
+      ),
+      '#default_value' => variable_get('islandora_cwrc_writer_writer_viaf_url', 'viaf'),
+    ),
   ));
 }
 
