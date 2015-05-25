@@ -61,6 +61,10 @@ function islandora_cwrc_writer_uninstall() {
     'islandora_cwrc_writer_organization_entity_collection',
     'islandora_cwrc_writer_title_entity_collection',
     'islandora_cwrc_writer_place_entity_collection',
+    'islandora_cwrc_writer_cwrc_api_url',
+    'islandora_cwrc_writer_geo_names_url',
+    'islandora_cwrc_writer_google_geocode_url',
+    'islandora_cwrc_writer_viaf_url',
   );
   foreach ($variables as $variable) {
     variable_del($variable);
