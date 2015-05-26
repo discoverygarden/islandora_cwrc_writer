@@ -175,7 +175,7 @@ function islandora_cwrc_writer_default_config() {
       'cwrcApiUrl' => url(variable_get('islandora_cwrc_writer_cwrc_api_url', 'cwrc/api'), array('absolute' => TRUE)),
       'geonameUrl' => url(variable_get('islandora_cwrc_writer_geo_names_url', 'geonames'), array('absolute' => TRUE)),
       'googleGeocodeUrl' => url(variable_get('islandora_cwrc_writer_google_geocode_url', 'http://maps.googleapis.com/maps/api/geocode/xml'), array('absolute' => TRUE, 'external' => TRUE)),
-      'viafUrl' => url(variable_get('islandora_cwrc_writer_writer_viaf_url', 'viaf'), array('absolute' => TRUE)),
+      'viafUrl' => url(variable_get('islandora_cwrc_writer_viaf_url', 'viaf'), array('absolute' => TRUE)),
       'schemas' => array(
         'person' => 'http://cwrc.ca/schemas/entities.rng',
         'organization' => 'http://cwrc.ca/schemas/entities.rng',
