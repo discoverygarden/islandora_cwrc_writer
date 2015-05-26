@@ -98,7 +98,7 @@ function islandora_cwrc_writer_admin_settings_form(array $form, array &$form_sta
           'This REST end point is used for searching <a href="@url">The Virtual International Authority File</a> database.',
           array('@url' => url('https://viaf.org/'))
         ),
-        '#default_value' => variable_get('islandora_cwrc_writer_writer_viaf_url', 'viaf'),
+        '#default_value' => variable_get('islandora_cwrc_writer_viaf_url', 'viaf'),
       ),
     ),
   ));
