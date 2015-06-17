@@ -46,7 +46,8 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
     // currently allow the user to make new documents or remove them.
     switch ($request_method) {
       case 'GET':
-        $schema_url = islandora_cwrc_writer_get_schema_url($document->parent);
+        $object = islandora_object_load($pid);
+        $schema_url = islandora_cwrc_writer_get_schema_url($object);
         // Adding the processing instruction to the document sets the default
         // schema to be used by the CWRC-Writer. This assumes that the document
         // does not already have an xml-model processing instruction.
@@ -103,13 +104,8 @@ function islandora_cwrc_writer_document_schema($pid, $dsid = 'CWRC') {
   // Need to get the version object which this page belongs to.
   $object = islandora_object_load($pid);
   if ($object) {
-    // For now we assume documents will be split across pages, rather than an
-    // complete object onto itself.
-    $rels = $object->relationships->get(FEDORA_RELS_EXT_URI, 'isMemberOf');
-    $parent_rels = reset($rels);
-    $parent_object = islandora_object_load($parent_rels['object']['value']);
     $schema_object = islandora_object_load(filter_input(INPUT_POST, 'pid'));
-    islandora_cwrc_writer_set_document_schema($parent_object, $schema_object);
+    islandora_cwrc_writer_set_document_schema($object, $schema_object);
   }
   // Message isn't handled client side.
   drupal_json_output(array('success' => TRUE));
