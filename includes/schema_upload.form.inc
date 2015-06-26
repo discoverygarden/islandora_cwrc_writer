@@ -114,6 +114,7 @@ EOT;
  *   The drupal form state.
  */
 function islandora_cwrc_writer_schema_upload_form_validate(array $form, array &$form_state) {
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   $rng_file = file_load($form_state['values']['rng_file']);
   $rng_path = drupal_realpath($rng_file->uri);
   $mapping = islandora_cwrc_writer_guess_schema_mapping_from_schema($rng_path);
@@ -132,6 +133,7 @@ function islandora_cwrc_writer_schema_upload_form_validate(array $form, array &$
  */
 function islandora_cwrc_writer_schema_upload_form_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
+  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   $object = islandora_ingest_form_get_object($form_state);
   $object->label = $form_state['values']['label'];
   if (empty($object['SCHEMA'])) {
