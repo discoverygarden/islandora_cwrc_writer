@@ -612,7 +612,7 @@ function islandora_cwrc_writer_islandora_xml_form_builder_form_associations() {
       'form_name' => 'CWRC-Writer Organization Entity Form',
       'dsid' => 'ORGANIZATION',
       'title_field' => array(
-        'person', 'identity', 'preferredForm', 'namePart', 'namePart',
+        'organization', 'identity', 'preferredForm', 'namePart', 'namePart',
       ),
       'transform' => 'No Transform',
       'template' => FALSE,
@@ -622,7 +622,7 @@ function islandora_cwrc_writer_islandora_xml_form_builder_form_associations() {
       'form_name' => 'CWRC-Writer Title Entity Form',
       'dsid' => 'TITLE',
       'title_field' => array(
-        'person', 'identity', 'preferredForm', 'namePart', 'namePart',
+        'title',
       ),
       'transform' => 'No Transform',
       'template' => FALSE,
@@ -632,7 +632,7 @@ function islandora_cwrc_writer_islandora_xml_form_builder_form_associations() {
       'form_name' => 'CWRC-Writer Place Entity Form',
       'dsid' => 'PLACE',
       'title_field' => array(
-        'person', 'identity', 'preferredForm', 'namePart', 'namePart',
+        'place', 'identity', 'preferredForm', 'namePart', 'namePart',
       ),
       'transform' => 'No Transform',
       'template' => FALSE,

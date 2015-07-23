@@ -8,7 +8,7 @@
   <dsTypeModel ID="RELS-INT" optional="true">
       <form FORMAT_URI="info:fedora/fedora-system:FedoraRELSInt-1.0" MIME="application/rdf+xml"></form>
   </dsTypeModel>
-  <dsTypeModel ID="MODS">
+  <dsTypeModel ID="TITLE">
     <form MIME="text/xml"/>
   </dsTypeModel>
 </dsCompositeModel>
