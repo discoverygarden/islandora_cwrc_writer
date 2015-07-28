@@ -28,8 +28,8 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
         // insertion methods use a domManip function.
         script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = '/sites/all/libraries/CWRC-Writer/src/js/lib/require/require.js';
-        script.setAttribute('data-main', '/sites/all/libraries/CWRC-Writer/src/js/config.js');
+        script.src = settings.CWRCWriter.cwrcRootUrl + 'js/lib/require/require.js';
+        script.setAttribute('data-main', settings.CWRCWriter.cwrcRootUrl + 'js/config.js');
         document.head.appendChild(script);
       }
     }
