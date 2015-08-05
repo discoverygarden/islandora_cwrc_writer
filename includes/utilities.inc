@@ -633,7 +633,7 @@ function islandora_cwrc_writer_guess_schema_mapping_from_schema($file) {
   // Orlando.
   $xpath = new DOMXPath($doc);
   $xpath->registerNamespace('rng', 'http://relaxng.org/ns/structure/1.0');
-  $results = $xpath->query('//rng:start/rng:element[@name="BIOGRAPHY" or @name="EVENTS" or @name="WRITING"]');
+  $results = $xpath->query('//rng:start/rng:element[@name="BIOGRAPHY" or @name="EVENTS" or @name="EVENT" or @name="WRITING"]');
   if ($results->length !== 0) {
     return ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO;
   }
