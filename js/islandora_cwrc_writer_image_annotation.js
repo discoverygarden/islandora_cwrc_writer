@@ -22,10 +22,6 @@
 function cwrcWriterInit($, Writer, Delegator) {
   'use strict';
   var writer, config;
-  // Replace the CwrcAPI with our own constructor which can handle how we
-  // deal with entities.
-  CwrcApi = Drupal.CWRCWriter.api.CwrcApi;
-
   config = Drupal.settings.CWRCWriter;
   config.id = config.id || 'editor';
   config.delegator = Delegator;
@@ -138,9 +134,6 @@ function cwrcWriterInit($, Writer, Delegator) {
         // Replace the show loader with our own function which can handle how we
         // load documents, such that it will be drupal aware.
         writer.dialogManager.filemanager.showLoader = Drupal.CWRCWriter.dialogManager.filemanager.showLoader($, writer);
-        // Replace the CwrcAPI with our own constructor which can handle how we
-        // deal with entities.
-        CwrcApi = Drupal.CWRCWriter.api.CwrcApi;
         // Log all loaded documents.
         writer.event('documentLoaded').subscribe(function () {
           // Update the select field with the new value if possible.

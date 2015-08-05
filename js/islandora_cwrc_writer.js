@@ -115,10 +115,6 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
 function cwrcWriterInit($, Writer, Delegator) {
   'use strict';
   var writer, config;
-  // Replace the CwrcAPI with our own constructor which can handle how we
-  // deal with entities.
-  CwrcApi = Drupal.CWRCWriter.api.CwrcApi;
-
   config = Drupal.settings.CWRCWriter;
   config.id = config.id || 'editor';
   config.delegator = Delegator;

@@ -62,10 +62,8 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
   _template_preprocess_islandora_cwrc_writer_schema_settings($variables);
 
   drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
-  // Override the CWRC-Writer/src/js/dialogs/fileManager.js and
-  // CWRC-Writer/src/js/cwrcDialogs/cwrc-api.js.
+  // Override the CWRC-Writer/src/js/dialogs/fileManager.js
   drupal_add_js("$module_path/js/dialogs/fileManager.js");
-  drupal_add_js("$module_path/js/cwrcDialogs/cwrc-api.js");
   drupal_add_js("$module_path/js/islandora_cwrc_writer.js");
   drupal_add_css("$module_path/css/islandora_cwrc_writer.base.css");
   islandora_cwrc_flag_recorded_resources();
