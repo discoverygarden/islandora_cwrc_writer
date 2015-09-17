@@ -690,6 +690,90 @@ function islandora_cwrc_writer_set_document_schema(AbstractObject $object, Abstr
 }
 
 /**
+ * Adds the given processing instruction to the given DOMDocument.
+ *
+ * @param DOMDocument $doc
+ *   The XML document to add the processing instructions to.
+ * @param string $instruction
+ *   The instruction text.
+ * @param string $type
+ *   The type of processing instruction to add.
+ */
+function islandora_cwrc_writer_add_processing_instruction(DOMDocument $doc, $instruction, $type) {
+  // Remove any existing processing instructions of this type.
+  $doc = islandora_cwrc_writer_remove_processing_instructions($doc, $type);
+  $processing_instruction = $doc->createProcessingInstruction($type, $instruction);
+  $doc->insertBefore($processing_instruction, $doc->documentElement);
+  return $doc;
+}
+
+/**
+ * Removes a type of processing instruction from the given DOMDocument.
+ * 
+ * @param DOMDocument $doc
+ *   The document to remove the processing instruction from.
+ * @param string $type
+ *   The type of processing instruction to remove.
+ *
+ * @return DOMDocument
+ *   The modified XML.
+ */
+function islandora_cwrc_writer_remove_processing_instructions(DOMDocument $doc, $type) {
+  if ($doc->hasChildNodes()) {
+    foreach ($doc->childNodes as $child_node) {
+      if (is_a($child_node, 'DOMProcessingInstruction') && $child_node->nodeName == $type) {
+        $child_node->parentNode->removeChild($child_node);
+      }
+    }
+  }
+  return $doc;
+}
+
+/**
+ * Adds the given stylesheet processing instructions for the given DOMDocument.
+ *
+ * @param DOMDocument $doc
+ *   The XML document to add the xml-stylesheet processing instructions to.
+ * @param string $url
+ *   An absolute URL to a stylesheet.
+ * @param string $mimetype
+ *   The stylesheet mimetype.
+ *
+ * @return DOMDocument
+ *   The modified XML.
+ */
+function islandora_cwrc_writer_add_stylesheet_processing_instruction(DOMDocument $doc, $url, $mimetype) {
+  // Double quotes are required or else the CWRC-Writer will break trying to
+  // parse it because it uses a poor regular expression.
+  $instructions = 'href="' . $url . '" type="' . $mimetype . '"';
+  $doc = islandora_cwrc_writer_add_processing_instruction($doc, $instructions, 'xml-stylesheet');
+  return $doc;
+}
+
+/**
+ * Adds the given xml-stylesheet processing instructions for a given string.
+ *
+ * @param string $xml
+ *   The XML document to add the stylesheet processing instructions to.
+ * @param string $url
+ *   An absolute URL to a stylesheet.
+ * @param string $mimetype
+ *   The stylesheet mimetype.
+ *
+ * @return string
+ *   The XML document with the processing instruction added if successful;
+ *   FALSE otherwise.
+ */
+function islandora_cwrc_writer_add_stylesheet_processing_instruction_to_string($xml, $url, $mimetype) {
+  $doc = islandora_cwrc_writer_load_document_from_string($xml);
+  if ($doc) {
+    $doc = islandora_cwrc_writer_add_stylesheet_processing_instruction($doc, $url, $mimetype);
+    return $doc->saveXML();
+  }
+  return FALSE;
+}
+
+/**
  * Adds the given xml-model processing instructions for the given DOMDocument.
  *
  * @param DOMDocument $doc
@@ -701,13 +785,8 @@ function islandora_cwrc_writer_set_document_schema(AbstractObject $object, Abstr
  *   The XML document with the processing instruction added to it.
  */
 function islandora_cwrc_writer_add_model_processing_instruction(DOMDocument $doc, $url) {
-  // Remove any existing model processing instructions.
-  $doc = islandora_cwrc_writer_remove_model_processing_instructions($doc);
-  // Double quotes are required or else the CWRC-Writer will break trying to
-  // parse it because it uses a poor regular expression.
   $instructions = 'href="' . $url . '" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"';
-  $processing_instruction = $doc->createProcessingInstruction('xml-model', $instructions);
-  $doc->insertBefore($processing_instruction, $doc->documentElement);
+  $doc = islandora_cwrc_writer_add_processing_instruction($doc, $instructions, 'xml-model');
   return $doc;
 }
 
@@ -762,14 +841,7 @@ function islandora_cwrc_writer_add_model_processing_instruction_to_string($xml, 
  *   The XML document with the processing instruction removed.
  */
 function islandora_cwrc_writer_remove_model_processing_instructions(DOMDocument $doc) {
-  if ($doc->hasChildNodes()) {
-    foreach ($doc->childNodes as $child_node) {
-      if (is_a($child_node, 'DOMProcessingInstruction') && $child_node->nodeName == 'xml-model') {
-        $child_node->parentNode->removeChild($child_node);
-      }
-    }
-  }
-  return $doc;
+  return islandora_cwrc_writer_remove_processing_instructions($doc, 'xml-model');
 }
 
 /**
