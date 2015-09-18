@@ -746,8 +746,7 @@ function islandora_cwrc_writer_add_stylesheet_processing_instruction(DOMDocument
   // Double quotes are required or else the CWRC-Writer will break trying to
   // parse it because it uses a poor regular expression.
   $instructions = 'href="' . $url . '" type="' . $mimetype . '"';
-  $doc = islandora_cwrc_writer_add_processing_instruction($doc, $instructions, 'xml-stylesheet');
-  return $doc;
+  return islandora_cwrc_writer_add_processing_instruction($doc, $instructions, 'xml-stylesheet');
 }
 
 /**
@@ -786,8 +785,7 @@ function islandora_cwrc_writer_add_stylesheet_processing_instruction_to_string($
  */
 function islandora_cwrc_writer_add_model_processing_instruction(DOMDocument $doc, $url) {
   $instructions = 'href="' . $url . '" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"';
-  $doc = islandora_cwrc_writer_add_processing_instruction($doc, $instructions, 'xml-model');
-  return $doc;
+  return islandora_cwrc_writer_add_processing_instruction($doc, $instructions, 'xml-model');
 }
 
 /**
