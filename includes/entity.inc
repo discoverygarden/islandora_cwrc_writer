@@ -215,11 +215,23 @@ function islandora_cwrc_writer_cwrc_api_create_entity($type, $content) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   $valid_types = islandora_cwrc_writer_valid_entity_types();
   $content_model = $valid_types[$type];
+  $collection_pid = islandora_cwrc_writer_default_entity_collection($type);
+  $cwrc_entity_namespace = 'cwrc';
+  // Assign the namespace based on the one configured in the parent collection.
+  if ($collection_pid) {
+    $collection = islandora_object_load($collection_pid);
+    if ($collection && isset($collection['COLLECTION_POLICY'])) {
+      $policy = new CollectionPolicy($collection['COLLECTION_POLICY']->content);
+      $collection_content_models = $policy->getContentModels();
+      if (array_key_exists($content_model, $collection_content_models)) {
+        $cwrc_entity_namespace = $collection_content_models[$content_model]['namespace'];
+      }
+    }
+  }
   $tuque = islandora_get_tuque_connection();
-  $object = $tuque->repository->constructObject('cwrc', TRUE);
+  $object = $tuque->repository->constructObject($cwrc_entity_namespace, TRUE);
   $object->models = array($content_model);
   $object->label = islandora_cwrc_writer_cwrc_api_get_entity_label($type, $content);
-  $collection_pid = islandora_cwrc_writer_default_entity_collection($type);
   if ($collection_pid) {
     $object->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $collection_pid);
   }
