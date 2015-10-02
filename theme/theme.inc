@@ -61,7 +61,6 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
   $variables['settings']['documents'] = $variables['documents'];
   _template_preprocess_islandora_cwrc_writer_schema_settings($variables);
 
-  drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
   // Override the CWRC-Writer/src/js/dialogs/fileManager.js
   drupal_add_js("$module_path/js/dialogs/fileManager.js");
   drupal_add_js("$module_path/js/islandora_cwrc_writer.js");
@@ -75,6 +74,7 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
  * Implements template_process_islandora_cwrc_writer().
  */
 function template_process_islandora_cwrc_writer(array &$variables) {
+  drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   $variables['header'] = drupal_render($variables['header']);
   $variables['western_tabs'] = drupal_render($variables['western_tabs']);
