@@ -158,7 +158,7 @@ function islandora_cwrc_writer_embedded_css() {
  */
 function islandora_cwrc_writer_default_config() {
   $cwrc_writer_path = libraries_get_path(ISLANDORA_CWRC_WRITER_LIB);
-  return array(
+  $settings = array(
     'project' => 'cwrc',
     // We need trailing slashes on the urls for CWRC to work.
     'cwrcRootUrl' => url("$cwrc_writer_path/src/", array('absolute' => TRUE)),
@@ -234,6 +234,8 @@ function islandora_cwrc_writer_default_config() {
       ),
     ),
   );
+  drupal_alter('islandora_cwrc_writer_default_settings', $settings);
+  return $settings;
 }
 
 /**
