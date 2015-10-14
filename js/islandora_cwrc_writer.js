@@ -45,8 +45,8 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
                     cwrcWriterInit.call(window, $, Writer, Delegator);
                   });
                 });
-      }); 
-    }
+      });
+   }
   };
 
   // Attach behavior to the select field in the header so the user can change
