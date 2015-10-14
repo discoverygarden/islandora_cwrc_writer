@@ -33,11 +33,9 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
     // currently allow the user to make new documents or remove them.
     switch ($request_method) {
       case 'GET':
-        $schema_url = islandora_cwrc_writer_get_schema_url($document->parent);
-        // Adding the processing instruction to the document sets the default
-        // schema to be used by the CWRC-Writer. This assumes that the document
-        // does not already have an xml-model processing instruction.
-        $response = islandora_cwrc_writer_add_model_processing_instruction_to_string($document->content, $schema_url);
+        // The response from get_requested_resource should have processing
+        // instructions appended already, so no need to add them.
+        $response = $document->content;
         break;
 
       case 'PUT':

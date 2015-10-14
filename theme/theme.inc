@@ -46,7 +46,6 @@ function template_process_islandora_cwrc_writer_iframe(array &$variables) {
  */
 function template_preprocess_islandora_cwrc_writer(array &$variables) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
-  $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
   // Start recording which resources should be rendered as part of the
   // CWRCWriter.
   islandora_cwrc_record_new_resources_to_flag();
@@ -60,22 +59,21 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
   }
   $variables['settings']['documents'] = $variables['documents'];
   _template_preprocess_islandora_cwrc_writer_schema_settings($variables);
-
-  // Override the CWRC-Writer/src/js/dialogs/fileManager.js
-  drupal_add_js("$module_path/js/dialogs/fileManager.js");
-  drupal_add_js("$module_path/js/islandora_cwrc_writer.js");
-  drupal_add_css("$module_path/css/islandora_cwrc_writer.base.css");
   islandora_cwrc_flag_recorded_resources();
-  // The Widgets should be preprocessed last.
-  islandora_cwrc_writer_preprocess_source_widget($variables);
 }
 
 /**
  * Implements template_process_islandora_cwrc_writer().
  */
 function template_process_islandora_cwrc_writer(array &$variables) {
+  $module_path = drupal_get_path('module', 'islandora_cwrc_writer');
+  // Override the CWRC-Writer/src/js/dialogs/fileManager.js
+  drupal_add_js("$module_path/js/dialogs/fileManager.js");
+  drupal_add_js("$module_path/js/islandora_cwrc_writer.js");
+  drupal_add_css("$module_path/css/islandora_cwrc_writer.base.css");
+  // The Widgets should be preprocessed last.
   drupal_add_js(array('CWRCWriter' => $variables['settings']), array('type' => 'setting'));
-  module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
+  islandora_cwrc_writer_preprocess_source_widget($variables);
   $variables['header'] = drupal_render($variables['header']);
   $variables['western_tabs'] = drupal_render($variables['western_tabs']);
   $variables['western_tabs_content'] = drupal_render($variables['western_tabs_content']);
@@ -412,8 +410,11 @@ function template_process_islandora_cwrc_writer_text_image_link_dialog(array &$v
  */
 function _template_preprocess_islandora_cwrc_writer_schema_settings(array &$variables) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
+  if (!isset($variables['settings']['schemas'])) {
+    $variables['settings']['schemas'] = array();
+  }
   // Combine the provided schemas with ones discovered in the RI.
-  $variables['settings']['schemas'] = $variables['settings']['schemas'] + islandora_cwrc_writer_get_schemas();
+  $variables['settings']['schemas'] = array_merge_recursive($variables['settings']['schemas'], islandora_cwrc_writer_get_schemas());
   // Get the PIDs of the default schemas.
   $config = islandora_cwrc_writer_default_config();
   $pids = array();
