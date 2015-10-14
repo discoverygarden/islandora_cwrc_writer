@@ -120,6 +120,7 @@ function cwrcWriterInit($, Writer, Delegator) {
   config.delegator = Delegator;
   writer = new Writer(config);
   writer.init(config.id);
+  
   /**
    * Re-write the Delegator save to have schema info.
    *
@@ -220,6 +221,22 @@ function cwrcWriterInit($, Writer, Delegator) {
         // The function setupLayoutAndModules() is provided by layout.js, this
         // function assumes it was already loaded before it's called.
         setupLayoutAndModules(writer, EntitiesList, Relations, Selection, StructureTree, Validation);
+        // Determine how to display.
+        if (typeof config.initial_mode !== 'undefined') {
+          if (config.initial_mode == 'annotate') {
+            writer.isAnnotator = true;
+            writer.layout.open('west');
+            writer.showToolbar();
+            writer.editor.plugins.cwrc_contextmenu.disabled = false;
+            writer.editor.plugins.cwrc_contextmenu.entityTagsOnly = true;
+          }
+          else if (config.initial_mode == 'read') {
+            writer.isAnnotator = false;
+            writer.layout.close('west');
+            writer.hideToolbar();
+            writer.editor.plugins.cwrc_contextmenu.disabled = true;
+          }
+        }
         // Replace the show loader with our own function which can handle how we
         // load documents, such that it will be drupal aware.
         writer.dialogManager.filemanager.showLoader = Drupal.CWRCWriter.dialogManager.filemanager.showLoader($, writer);
