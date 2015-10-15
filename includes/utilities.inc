@@ -376,6 +376,9 @@ function islandora_cwrc_writer_default_theme_variables() {
     // A Drupal renderable array expected to be links which representing the
     // tabs to be displayed in the southern panel.
     'southern_tabs' => islandora_cwrc_writer_default_southern_tabs(),
+    // Additional configuration options to pass through to the CWRC-Writer, so
+    // that default ones don't have to be overridden necessarily.
+    'config' => array(),
   );
 }
 
