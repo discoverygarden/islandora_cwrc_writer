@@ -120,7 +120,7 @@ function cwrcWriterInit($, Writer, Delegator) {
   config.delegator = Delegator;
   writer = new Writer(config);
   writer.init(config.id);
-  
+
   /**
    * Re-write the Delegator save to have schema info.
    *
@@ -145,18 +145,70 @@ function cwrcWriterInit($, Writer, Delegator) {
         }
         writer.event('documentSaved').publish();
       },
-      error: function() {
-        writer.dialogManager.show('message', {
-          title: 'Error',
-          msg: 'An error occurred and '+docId+' was not saved.',
-          type: 'error'
-        });
+      error: function(xhr, status, error) {
+        writer.delegator.displayError(xhr, docId);
         if (callback) {
           callback.call(writer, false);
         }
       }
     });
   };
+
+    /**
+     * Re-write the Delegator save and exit to do things.
+     *
+     * @see Delegator.saveAndExit
+     */
+    writer.delegator.saveAndExit = function(callback) {
+        var docText = writer.converter.getDocumentContent(true);
+        $.ajax({
+          url : writer.baseUrl+'editor/documents/'+writer.currentDocId,
+          type: 'PUT',
+          dataType: 'json',
+          data: {'doc':docText, 'schema':writer.schemaManager.schemas[writer.schemaManager.schemaId]['pid']},
+          success: function(data, status, xhr) {
+              $.ajax({
+                  url: Drupal.settings.basePath+'islandora/rest/v1/object/'+writer.currentDocId+'/lock',
+                  type: 'DELETE',
+                  success: function(data, status, xhr) {
+                      window.location = Drupal.settings.basePath+'islandora/object/'+writer.currentDocId
+                  },
+                  error: function() {
+                      writer.delegator.displayError(xhr, docId);
+                  }
+              })
+          },
+          error: function(xhr, status, error) {
+              writer.delegator.displayError(xhr, writer.currentDocId);
+              if (callback) {
+                  callback.call(writer, false);
+              }
+            }
+       });
+    };
+
+    /**
+     * Utility function to display errors that occur during REST requests.
+     */
+    writer.delegator.displayError = function(xhr, docId) {
+        var params = {
+            '@docid': docId
+        }
+
+        var msg = Drupal.t('An error occurred and @docid was not saved.', params);
+        if (typeof xhr.responseText != 'undefined') {
+            var responseText = jQuery.parseJSON(xhr.responseText);
+            var responseparams = {
+                '!responseText': responseText.message
+            }
+            var msg = msg.concat(' ' + Drupal.t('Additional info: !responseText', responseparams))
+        }
+        writer.dialogManager.show('message', {
+            title: 'Error',
+            msg: msg,
+            type: 'error'
+        });
+    };
   // Replace the baseUrl after object construction since it's hard-coded.
   writer.baseUrl = config.baseUrl;
   // Hold onto a reference for safe keeping.
