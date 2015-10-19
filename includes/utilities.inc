@@ -712,7 +712,7 @@ function islandora_cwrc_writer_add_processing_instruction(DOMDocument $doc, $ins
 
 /**
  * Removes a type of processing instruction from the given DOMDocument.
- * 
+ *
  * @param DOMDocument $doc
  *   The document to remove the processing instruction from.
  * @param string $type
