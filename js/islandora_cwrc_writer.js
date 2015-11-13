@@ -134,7 +134,6 @@ function cwrcWriterInit($, Writer, Delegator) {
       dataType: 'json',
       data: {'doc':docText, 'schema':writer.schemaManager.schemas[writer.schemaManager.schemaId]['pid']},
       success: function(data, status, xhr) {
-        writer.editor.isNotDirty = 1; // force clean state
         writer.dialogManager.show('message', {
           title: 'Document Saved',
           msg: docId+' was saved successfully.'
@@ -144,6 +143,10 @@ function cwrcWriterInit($, Writer, Delegator) {
           callback.call(writer, true);
         }
         writer.event('documentSaved').publish();
+        // Force the state to be clean, which has to be after the
+        // window.location.hash is updated otherwise it may reset to the dirty
+        // state.
+        writer.editor.isNotDirty = true;
       },
       error: function(xhr, status, error) {
         writer.delegator.displayError(xhr, docId);
