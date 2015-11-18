@@ -175,6 +175,10 @@ function cwrcWriterInit($, Writer, Delegator) {
                   type: 'DELETE',
                   success: function(data, status, xhr) {
                       window.location = Drupal.settings.basePath+'islandora/object/'+writer.currentDocId
+                      // Force the state to be clean, which has to be after the
+                      // window.location.hash is updated otherwise it may reset to the dirty
+                      // state.
+                      writer.editor.isNotDirty = true;
                   },
                   error: function() {
                       writer.delegator.displayError(xhr, docId);
