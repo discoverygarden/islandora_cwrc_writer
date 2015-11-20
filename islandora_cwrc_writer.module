@@ -260,7 +260,7 @@ function islandora_cwrc_writer_libraries_info() {
           'css/style.css' => $default_css_properties + array('basename' => 'cwrc.style.css'),
           'css/islandora_style.css' => $default_css_properties,
           'css/layout-default-latest.css' => $default_css_properties,
-          'smoothness/jquery-ui-1.10.4.custom.css' => $default_css_properties,
+          'css/cwrcstyle/jquery-ui.css' => $default_css_properties,
           'js/lib/snippet/jquery.snippet.css' => $default_css_properties,
           'js/lib/bootstrap/bootstrap.css' => $default_css_properties,
           'js/cwrcDialogs/css/datepicker.css' => $default_css_properties,
