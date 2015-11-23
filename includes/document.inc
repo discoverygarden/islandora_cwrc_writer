@@ -171,7 +171,7 @@ function islandora_cwrc_writer_style_document(AbstractDatastream $datastream) {
                 'The !accessible datastream on !pid could not be added to the CWRC datastream as it created malformed XML.',
                 array(
                   '!accessible' => $accessible,
-                  '!pid' => $schema_object->id,
+                  '!pid' => $schema_pid,
                 ),
                 WATCHDOG_WARNING
               );
