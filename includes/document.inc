@@ -40,7 +40,7 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
         }
         catch (InvalidArgumentException $e) {
           // Just use unstyled content if there's a problem.
-          $response = $datastream->content;
+          $response = $document->content;
         }
         break;
 
