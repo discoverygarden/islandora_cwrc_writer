@@ -139,7 +139,7 @@ function islandora_cwrc_writer_style_document(AbstractDatastream $datastream) {
           'The hasSchema relationship on !object pointed to an object (!schema_object) that could not be loaded.',
           array(
             '!object' => $object->id,
-            '!schema_object' => $schema_object->id,
+            '!schema_object' => $schema_pid,
           ),
           WATCHDOG_WARNING
         );
