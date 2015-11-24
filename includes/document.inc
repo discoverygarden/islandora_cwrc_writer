@@ -27,6 +27,8 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
   try {
     // Fetch the requested resource. Throws 404, if the resource is not found.
     $document = islandora_rest_get_requested_resource($pid, $dsid);
+    $object = $document->parent;
+
     // Check Drupal Permissions. Throws 401, 403, if access is denied.
     islandora_rest_require_access('datastream', $request_method, $document);
     // Generate the Response, we don't implement POST / DELETE as we don't
@@ -35,11 +37,18 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
       case 'GET':
         // The response from get_requested_resource should have processing
         // instructions appended already, so no need to add them.
-        try {
-          $response = islandora_cwrc_writer_style_document($document);
+
+        // Try to style it if it's a CWRC datastream.
+        if ($document->id == 'CWRC' && in_array('cwrc:documentCModel', $object->models)) {
+          try {
+            $response = islandora_cwrc_writer_style_document($document, $object);
+          }
+          catch (InvalidArgumentException $e) {
+            // Just use unstyled content if there's a problem.
+            $response = $document->content;
+          }
         }
-        catch (InvalidArgumentException $e) {
-          // Just use unstyled content if there's a problem.
+        else {
           $response = $document->content;
         }
         break;
@@ -120,72 +129,73 @@ function islandora_cwrc_writer_update_document(AbstractDatastream $datastream) {
  *
  * @param AbstractDatastream $datastream
  *   The CWRC datastream to style.
+ * @param AbstractObject $object
+ *   The parent of the CWRC datastream to style (OPTIONAL).
  *
  * @throws InvalidArgumentException
  *
  * @return mixed
  *   The styled document as a string.
  */
-function islandora_cwrc_writer_style_document(AbstractDatastream $datastream) {
-  $object = $datastream->parent;
+function islandora_cwrc_writer_style_document(AbstractDatastream $datastream, AbstractObject $object = NULL) {
+  if ($object === NULL) {
+    $object = $datastream->parent;
+  }
 
-  if ($datastream->id == 'CWRC' && in_array('cwrc:documentCModel', $object->models)) {
-    // Get the schema object. If there's a problem, bail.
-    $schema_pid = $object->relationships->get('http://cwrc.ca/ns/cw#', 'hasSchema');
-    if ($schema_pid) {
-      $schema_object = islandora_object_load($schema_pid[0]['object']['value']);
-      if (!$schema_object) {
-        watchdog('islandora_cwrc_writer',
-          'The hasSchema relationship on !object pointed to an object (!schema_object) that could not be loaded.',
-          array(
-            '!object' => $object->id,
-            '!schema_object' => $schema_pid,
-          ),
-          WATCHDOG_WARNING
-        );
-        throw new InvalidArgumentException("Can not load schema object $schema_pid for {$object->id}");
-      }
+  // Get the schema object. If there's a problem, bail.
+  $schema_pid = $object->relationships->get('http://cwrc.ca/ns/cw#', 'hasSchema');
+  if ($schema_pid) {
+    $schema_object = islandora_object_load($schema_pid[0]['object']['value']);
+    if (!$schema_object) {
+      watchdog('islandora_cwrc_writer',
+        'The hasSchema relationship on !object pointed to an object (!schema_object) that could not be loaded.',
+        array(
+          '!object' => $object->id,
+          '!schema_object' => $schema_pid,
+        ),
+        WATCHDOG_WARNING
+      );
+      throw new InvalidArgumentException("Can not load schema object $schema_pid for {$object->id}");
+    }
 
-      $accessibles = islandora_cwrc_writer_get_rng_css_accessibility($schema_object);
-      if ($accessibles) {
-        // Get and possibly modify the original content.
-        if ($datastream->controlGroup == 'X' || 'M') {
-          global $base_url;
-          $cwrc = $datastream->content;
-          module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
+    $accessibles = islandora_cwrc_writer_get_rng_css_accessibility($schema_object);
+    if ($accessibles) {
+      // Get and possibly modify the original content.
+      if ($datastream->controlGroup == 'X' || 'M') {
+        global $base_url;
+        $cwrc = $datastream->content;
+        module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
 
-          // Attempt to add the two datastreams.
-          foreach ($accessibles as $accessible) {
-            $url = $schema_object[$accessible]->controlGroup === 'X' || $schema_object[$accessible]->controlGroup === 'M' ?
-              "$base_url/islandora/object/{$schema_object->id}/datastream/$accessible/view" :
-              $schema_object[$accessible]->url;
-            if ($accessible == 'SCHEMA') {
-              $cwrc = islandora_cwrc_writer_add_model_processing_instruction_to_string($cwrc, $url);
-            }
-            else {
-              $cwrc = islandora_cwrc_writer_add_stylesheet_processing_instruction_to_string($cwrc, $url, 'text/css');
-            }
-            // If something goes wrong, bail and return false.
-            if (!$cwrc) {
-              watchdog('islandora_cwrc_writer',
-                'The !accessible datastream on !pid could not be added to the CWRC datastream as it created malformed XML.',
-                array(
-                  '!accessible' => $accessible,
-                  '!pid' => $schema_pid,
-                ),
-                WATCHDOG_WARNING
-              );
-              throw new InvalidArgumentException("Can not add $accessible datastream on {$schema_object->id} to the CWRC datastream of {$object->id}.");
-            }
+        // Attempt to add the two datastreams.
+        foreach ($accessibles as $accessible) {
+          $url = $schema_object[$accessible]->controlGroup === 'X' || $schema_object[$accessible]->controlGroup === 'M' ?
+            "$base_url/islandora/object/{$schema_object->id}/datastream/$accessible/view" :
+            $schema_object[$accessible]->url;
+          if ($accessible == 'SCHEMA') {
+            $cwrc = islandora_cwrc_writer_add_model_processing_instruction_to_string($cwrc, $url);
           }
-          return $cwrc;
+          else {
+            $cwrc = islandora_cwrc_writer_add_stylesheet_processing_instruction_to_string($cwrc, $url, 'text/css');
+          }
+          // If something goes wrong, bail and return false.
+          if (!$cwrc) {
+            watchdog('islandora_cwrc_writer',
+              'The !accessible datastream on !pid could not be added to the CWRC datastream as it created malformed XML.',
+              array(
+                '!accessible' => $accessible,
+                '!pid' => $schema_pid,
+              ),
+              WATCHDOG_WARNING
+            );
+            throw new InvalidArgumentException("Can not add $accessible datastream on {$schema_object->id} to the CWRC datastream of {$object->id}.");
+          }
         }
+        return $cwrc;
       }
     }
   }
 
-  // Default in all other cases.
-  throw new InvalidArgumentException("Provided datastream is not a CWRC datastream or its parent is not a cwrc:documentCModel.");
+  throw new InvalidArgumentException("Cannot ascertain PID for schema object associated with {$object->id}.");
 }
 
 /**
