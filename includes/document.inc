@@ -24,7 +24,12 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
   module_load_include('inc', 'islandora_rest', 'includes/datastream');
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
   $request_method = islandora_rest_get_request_method();
+
   try {
+    if (empty($pid)) {
+      throw new IllegalArgumentException("Please provide a non-empty pid.");
+    }
+
     // Fetch the requested resource. Throws 404, if the resource is not found.
     $document = islandora_rest_get_requested_resource($pid, $dsid);
     $object = $document->parent;
@@ -38,8 +43,8 @@ function islandora_cwrc_writer_document($pid, $dsid = 'CWRC') {
         // The response from get_requested_resource should have processing
         // instructions appended already, so no need to add them.
 
-        // Try to style it if it's a CWRC datastream.
-        if ($document->id == 'CWRC' && in_array('cwrc:documentCModel', $object->models)) {
+        // Try to style it if it's the appropriate datastream.
+        if (strcmp($document->id, $dsid) == 0 && in_array('cwrc:documentCModel', $object->models)) {
           try {
             $response = islandora_cwrc_writer_style_document($document, $object);
           }
