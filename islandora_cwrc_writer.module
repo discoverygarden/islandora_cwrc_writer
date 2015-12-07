@@ -321,7 +321,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $datastream = $tei_schema->constructDatastream('SCHEMA', 'M');
   $datastream->label = 'SCHEMA';
   $datastream->mimetype = 'application/xml';
-  $datastream->setContentFromFile("$cwrc_rng_path/cwrc_tei_lite.rng", FALSE);
+  $datastream->setContentFromFile("$cwrc_rng_path/cwrc_tei_basic.rng", FALSE);
 
   $tei_schema->ingestDatastream($datastream);
   // Add the CSS datastream.
@@ -330,6 +330,28 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
   $datastream->mimetype = 'text/css';
   $datastream->setContentFromFile("{$cwrc_writer_path}/src/css/tei_converted.css", FALSE);
   $tei_schema->ingestDatastream($datastream);
+
+  // CWRC TEI Lite Schema.
+  $tei_lite_schema = $connection->repository->constructObject('cwrc:teiLiteSchema');
+  $tei_lite_schema->owner = 'fedoraAdmin';
+  $tei_lite_schema->label = 'CWRC Lite TEI Schema';
+  $tei_lite_schema->models = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
+  $tei_lite_schema->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', ISLANDORA_CWRC_WRITER_SCHEMA_COLLECTION);
+  islandora_cwrc_writer_set_schema_mapping($tei_lite_schema, ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_TEI);
+
+  // Add the schema datastream.
+  $datastream = $tei_lite_schema->constructDatastream('SCHEMA', 'M');
+  $datastream->label = 'SCHEMA';
+  $datastream->mimetype = 'application/xml';
+  $datastream->setContentFromFile("$cwrc_rng_path/cwrc_tei_lite.rng", FALSE);
+
+  $tei_lite_schema->ingestDatastream($datastream);
+  // Add the CSS datastream.
+  $datastream = $tei_lite_schema->constructDatastream('CSS', 'M');
+  $datastream->label = 'CSS';
+  $datastream->mimetype = 'text/css';
+  $datastream->setContentFromFile("{$cwrc_writer_path}/src/css/tei_converted.css", FALSE);
+  $tei_lite_schema->ingestDatastream($datastream);
 
   // Events Schema.
   $event_schema = $connection->repository->constructObject('cwrc:eventsSchema');
@@ -535,6 +557,7 @@ function islandora_cwrc_writer_islandora_required_objects(IslandoraTuque $connec
         $schema_content_model,
         $schema_collection,
         $tei_schema,
+        $tei_lite_schema,
         $event_schema,
         $biography_schema,
         $writing_schema,
