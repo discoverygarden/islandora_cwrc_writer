@@ -162,9 +162,9 @@ function islandora_cwrc_writer_default_config() {
   return array(
     'project' => 'cwrc',
     // We need trailing slashes on the urls for CWRC to work.
-    'cwrcRootUrl' => url("$cwrc_writer_path/src/", array('absolute' => TRUE)),
+    'cwrcRootUrl' => file_create_url("$cwrc_writer_path/src/"),
     // The url in which we provide services for.
-    'baseUrl' => url('cwrc/', array('absolute' => TRUE)),
+    'baseUrl' => islandora_cwrc_writer_get_absolute_url('cwrc/'),
     // XML + RDF.
     'mode' => 0,
     'allowOverlap' => TRUE,
@@ -998,12 +998,8 @@ EOT;
       'pid' => $pid,
       'name' => $result['label']['value'],
       'schemaMappingsId' => $result['mapping']['value'],
-      'url' => url("islandora/object/{$pid}/datastream/SCHEMA/view", array(
-        'absolute' => TRUE,
-      )),
-      'cssUrl' => url("islandora/object/{$pid}/datastream/CSS/view", array(
-        'absolute' => TRUE,
-      )),
+      'url' => islandora_cwrc_writer_get_absolute_url("islandora/object/{$pid}/datastream/SCHEMA/view"),
+      'cssUrl' => islandora_cwrc_writer_get_absolute_url("islandora/object/{$pid}/datastream/CSS/view"),
       'aliases' => array(
         // XXX: Generate an alias to match the old concatenated structure
         // (without URL-encoding).
