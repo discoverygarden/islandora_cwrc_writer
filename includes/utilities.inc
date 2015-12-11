@@ -157,6 +157,7 @@ function islandora_cwrc_writer_embedded_css() {
  *   so that the CWRC-Writer can function correctly.
  */
 function islandora_cwrc_writer_default_config() {
+  global $base_url;
   $cwrc_writer_path = libraries_get_path(ISLANDORA_CWRC_WRITER_LIB);
   return array(
     'project' => 'cwrc',
@@ -197,6 +198,9 @@ function islandora_cwrc_writer_default_config() {
         'aliases' => array(
           'http://cwrc.ca/schema/CWRC-TEIBasic.rng',
           'http://cwrc.ca/schemas/cwrc_tei_lite.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:teiSchema/datastream/SCHEMA/view",
         ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_TEI,
       ),
@@ -205,7 +209,12 @@ function islandora_cwrc_writer_default_config() {
         'name' => 'CWRC Events Schema',
         'url' => url('islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:eventsSchema/datastream/CSS/view', array('absolute' => TRUE)),
-        'aliases' => array('http://cwrc.ca/schemas/orlando_event.rng'),
+        'aliases' => array(
+          'http://cwrc.ca/schemas/orlando_event.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view",
+        ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
       'biography' => array(
@@ -213,7 +222,12 @@ function islandora_cwrc_writer_default_config() {
         'name' => 'CWRC Biography Schema',
         'url' => url('islandora/object/cwrc:biographySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:biographySchema/datastream/CSS/view', array('absolute' => TRUE)),
-        'aliases' => array('http://cwrc.ca/schemas/orlando_biography.rng'),
+        'aliases' => array(
+          'http://cwrc.ca/schemas/orlando_biography.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:biographySchema/datastream/SCHEMA/view",
+        ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
       'writing' => array(
@@ -221,7 +235,12 @@ function islandora_cwrc_writer_default_config() {
         'name' => 'CWRC Writing Schema',
         'url' => url('islandora/object/cwrc:writingSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:writingSchema/datastream/CSS/view', array('absolute' => TRUE)),
-        'aliases' => array('http://cwrc.ca/schemas/orlando_writing.rng'),
+        'aliases' => array(
+          'http://cwrc.ca/schemas/orlando_writing.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:writingSchema/datastream/SCHEMA/view",
+        ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
       'entry' => array(
@@ -229,7 +248,12 @@ function islandora_cwrc_writer_default_config() {
         'name' => 'CWRC Entry Schema',
         'url' => url('islandora/object/cwrc:entrySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
         'cssUrl' => url('islandora/object/cwrc:entrySchema/datastream/CSS/view', array('absolute' => TRUE)),
-        'aliases' => array('http://cwrc.ca/schemas/cwrc_entry.rng'),
+        'aliases' => array(
+          'http://cwrc.ca/schemas/cwrc_entry.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:entrySchema/datastream/SCHEMA/view",
+        ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ENTRY,
       ),
     ),
@@ -953,6 +977,7 @@ function islandora_cwrc_writer_create_domdocument() {
  *   - schemaMappingsId: Indicates what mapping to use in the CWRC-Writer.
  */
 function islandora_cwrc_writer_get_schemas() {
+  global $base_url;
   $content_model = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
   $cwrc_namespace = CWRC_RELS_EXT_URI;
   $query = <<<EOT
@@ -981,6 +1006,11 @@ EOT;
       'cssUrl' => url("islandora/object/{$pid}/datastream/CSS/view", array(
         'absolute' => TRUE,
       )),
+      'aliases' => array(
+        // XXX: Generate an alias to match the old concatenated structure
+        // (without URL-encoding).
+        "$base_url/islandora/object/$pid/datastream/SCHEMA/view",
+      ),
     );
     $schemas[$pid] = $schema;
   }
