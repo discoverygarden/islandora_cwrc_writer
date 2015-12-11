@@ -174,7 +174,7 @@ function islandora_cwrc_writer_style_document(AbstractDatastream $datastream, Ab
         // Attempt to add the two datastreams.
         foreach ($accessibles as $accessible) {
           $url = $schema_object[$accessible]->controlGroup === 'X' || $schema_object[$accessible]->controlGroup === 'M' ?
-            "$base_url/islandora/object/{$schema_object->id}/datastream/$accessible/view" :
+            islandora_cwrc_writer_get_absolute_url("islandora/object/{$schema_object->id}/datastream/$accessible/view") :
             $schema_object[$accessible]->url;
           if ($accessible == 'SCHEMA') {
             $cwrc = islandora_cwrc_writer_add_model_processing_instruction_to_string($cwrc, $url);
