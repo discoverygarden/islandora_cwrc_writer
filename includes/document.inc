@@ -148,15 +148,16 @@ function islandora_cwrc_writer_style_document(AbstractDatastream $datastream, Ab
   }
 
   // Get the schema object. If there's a problem, bail.
-  $schema_pid = $object->relationships->get('http://cwrc.ca/ns/cw#', 'hasSchema');
+  $schema_pid = $object->relationships->get(CWRC_RELS_EXT_URI, 'hasSchema');
+  $schema_pid = reset($schema_pid);
   if ($schema_pid) {
-    $schema_object = islandora_object_load($schema_pid[0]['object']['value']);
+    $schema_object = islandora_object_load($schema_pid['object']['value']);
     if (!$schema_object) {
       watchdog('islandora_cwrc_writer',
         'The hasSchema relationship on !object pointed to an object (!schema_object) that could not be loaded.',
         array(
           '!object' => $object->id,
-          '!schema_object' => $schema_pid,
+          '!schema_object' => $schema_object->id,
         ),
         WATCHDOG_WARNING
       );
@@ -174,7 +175,7 @@ function islandora_cwrc_writer_style_document(AbstractDatastream $datastream, Ab
         // Attempt to add the two datastreams.
         foreach ($accessibles as $accessible) {
           $url = $schema_object[$accessible]->controlGroup === 'X' || $schema_object[$accessible]->controlGroup === 'M' ?
-            "$base_url/islandora/object/{$schema_object->id}/datastream/$accessible/view" :
+            islandora_cwrc_writer_get_absolute_url("islandora/object/{$schema_object->id}/datastream/$accessible/view") :
             $schema_object[$accessible]->url;
           if ($accessible == 'SCHEMA') {
             $cwrc = islandora_cwrc_writer_add_model_processing_instruction_to_string($cwrc, $url);
@@ -188,7 +189,7 @@ function islandora_cwrc_writer_style_document(AbstractDatastream $datastream, Ab
               'The !accessible datastream on !pid could not be added to the CWRC datastream as it created malformed XML.',
               array(
                 '!accessible' => $accessible,
-                '!pid' => $schema_pid,
+                '!pid' => $schema_object->id,
               ),
               WATCHDOG_WARNING
             );

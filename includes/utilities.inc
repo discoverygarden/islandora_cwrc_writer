@@ -157,13 +157,14 @@ function islandora_cwrc_writer_embedded_css() {
  *   so that the CWRC-Writer can function correctly.
  */
 function islandora_cwrc_writer_default_config() {
+  global $base_url;
   $cwrc_writer_path = libraries_get_path(ISLANDORA_CWRC_WRITER_LIB);
   return array(
     'project' => 'cwrc',
     // We need trailing slashes on the urls for CWRC to work.
-    'cwrcRootUrl' => url("$cwrc_writer_path/src/", array('absolute' => TRUE)),
+    'cwrcRootUrl' => file_create_url("$cwrc_writer_path/src/"),
     // The url in which we provide services for.
-    'baseUrl' => url('cwrc/', array('absolute' => TRUE)),
+    'baseUrl' => islandora_cwrc_writer_get_absolute_url('cwrc/'),
     // XML + RDF.
     'mode' => 0,
     'allowOverlap' => TRUE,
@@ -172,10 +173,10 @@ function islandora_cwrc_writer_default_config() {
     // run time.
     'documents' => array(),
     'cwrcDialogs' => array(
-      'cwrcApiUrl' => url(variable_get('islandora_cwrc_writer_cwrc_api_url', 'cwrc/api'), array('absolute' => TRUE)),
-      'geonameUrl' => url(variable_get('islandora_cwrc_writer_geo_names_url', 'geonames'), array('absolute' => TRUE)),
-      'googleGeocodeUrl' => url(variable_get('islandora_cwrc_writer_google_geocode_url', 'http://maps.googleapis.com/maps/api/geocode/xml'), array('absolute' => TRUE, 'external' => TRUE)),
-      'viafUrl' => url(variable_get('islandora_cwrc_writer_viaf_url', 'viaf'), array('absolute' => TRUE)),
+      'cwrcApiUrl' => islandora_cwrc_writer_get_absolute_url(variable_get('islandora_cwrc_writer_cwrc_api_url', 'cwrc/api')),
+      'geonameUrl' => islandora_cwrc_writer_get_absolute_url(variable_get('islandora_cwrc_writer_geo_names_url', 'geonames')),
+      'googleGeocodeUrl' => islandora_cwrc_writer_get_absolute_url(variable_get('islandora_cwrc_writer_google_geocode_url', 'http://maps.googleapis.com/maps/api/geocode/xml'), array('external' => TRUE)),
+      'viafUrl' => islandora_cwrc_writer_get_absolute_url(variable_get('islandora_cwrc_writer_viaf_url', 'viaf')),
       'schemas' => array(
         'person' => 'http://cwrc.ca/schemas/entities.rng',
         'organization' => 'http://cwrc.ca/schemas/entities.rng',
@@ -192,44 +193,67 @@ function islandora_cwrc_writer_default_config() {
       'tei' => array(
         'pid' => 'cwrc:teiSchema',
         'name' => 'CWRC Basic TEI Schema',
-        'url' => url('islandora/object/cwrc:teiSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:teiSchema/datastream/CSS/view', array('absolute' => TRUE)),
+        'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:teiSchema/datastream/SCHEMA/view'),
+        'cssUrl' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:teiSchema/datastream/CSS/view'),
         'aliases' => array(
           'http://cwrc.ca/schema/CWRC-TEIBasic.rng',
           'http://cwrc.ca/schemas/cwrc_tei_lite.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:teiSchema/datastream/SCHEMA/view",
         ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_TEI,
       ),
       'events' => array(
         'pid' => 'cwrc:eventsSchema',
         'name' => 'CWRC Events Schema',
-        'url' => url('islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:eventsSchema/datastream/CSS/view', array('absolute' => TRUE)),
-        'aliases' => array('http://cwrc.ca/schemas/orlando_event.rng'),
+        'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view'),
+        'cssUrl' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:eventsSchema/datastream/CSS/view'),
+        'aliases' => array(
+          'http://cwrc.ca/schemas/orlando_event.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view",
+        ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
       'biography' => array(
         'pid' => 'cwrc:biographySchema',
         'name' => 'CWRC Biography Schema',
-        'url' => url('islandora/object/cwrc:biographySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:biographySchema/datastream/CSS/view', array('absolute' => TRUE)),
-        'aliases' => array('http://cwrc.ca/schemas/orlando_biography.rng'),
+        'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:biographySchema/datastream/SCHEMA/view'),
+        'cssUrl' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:biographySchema/datastream/CSS/view'),
+        'aliases' => array(
+          'http://cwrc.ca/schemas/orlando_biography.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:biographySchema/datastream/SCHEMA/view",
+        ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
       'writing' => array(
         'pid' => 'cwrc:writingSchema',
         'name' => 'CWRC Writing Schema',
-        'url' => url('islandora/object/cwrc:writingSchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:writingSchema/datastream/CSS/view', array('absolute' => TRUE)),
-        'aliases' => array('http://cwrc.ca/schemas/orlando_writing.rng'),
+        'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:writingSchema/datastream/SCHEMA/view'),
+        'cssUrl' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:writingSchema/datastream/CSS/view'),
+        'aliases' => array(
+          'http://cwrc.ca/schemas/orlando_writing.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:writingSchema/datastream/SCHEMA/view",
+        ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
       'entry' => array(
         'pid' => 'cwrc:entrySchema',
         'name' => 'CWRC Entry Schema',
-        'url' => url('islandora/object/cwrc:entrySchema/datastream/SCHEMA/view', array('absolute' => TRUE)),
-        'cssUrl' => url('islandora/object/cwrc:entrySchema/datastream/CSS/view', array('absolute' => TRUE)),
-        'aliases' => array('http://cwrc.ca/schemas/cwrc_entry.rng'),
+        'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:entrySchema/datastream/SCHEMA/view'),
+        'cssUrl' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:entrySchema/datastream/CSS/view'),
+        'aliases' => array(
+          'http://cwrc.ca/schemas/cwrc_entry.rng',
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/cwrc:entrySchema/datastream/SCHEMA/view",
+        ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ENTRY,
       ),
     ),
@@ -469,9 +493,7 @@ EOT;
 function islandora_cwrc_writer_get_schema_url(AbstractObject $object) {
   $schema = islandora_cwrc_writer_get_document_schema_object($object);
   if ($schema) {
-    return url("islandora/object/{$schema->id}/datastream/SCHEMA/view", array(
-      'absolute' => TRUE,
-    ));
+    return islandora_cwrc_writer_get_absolute_url("islandora/object/{$schema->id}/datastream/SCHEMA/view");
   }
   return FALSE;
 }
@@ -953,6 +975,7 @@ function islandora_cwrc_writer_create_domdocument() {
  *   - schemaMappingsId: Indicates what mapping to use in the CWRC-Writer.
  */
 function islandora_cwrc_writer_get_schemas() {
+  global $base_url;
   $content_model = ISLANDORA_CWRC_WRITER_SCHEMA_CONTENT_MODEL;
   $cwrc_namespace = CWRC_RELS_EXT_URI;
   $query = <<<EOT
@@ -975,12 +998,13 @@ EOT;
       'pid' => $pid,
       'name' => $result['label']['value'],
       'schemaMappingsId' => $result['mapping']['value'],
-      'url' => url("islandora/object/{$pid}/datastream/SCHEMA/view", array(
-        'absolute' => TRUE,
-      )),
-      'cssUrl' => url("islandora/object/{$pid}/datastream/CSS/view", array(
-        'absolute' => TRUE,
-      )),
+      'url' => islandora_cwrc_writer_get_absolute_url("islandora/object/{$pid}/datastream/SCHEMA/view"),
+      'cssUrl' => islandora_cwrc_writer_get_absolute_url("islandora/object/{$pid}/datastream/CSS/view"),
+      'aliases' => array(
+        // XXX: Generate an alias to match the old concatenated structure
+        // (without URL-encoding).
+        "$base_url/islandora/object/$pid/datastream/SCHEMA/view",
+      ),
     );
     $schemas[$pid] = $schema;
   }
@@ -1109,4 +1133,29 @@ function islandora_cwrc_writer_default_entity_collection($type) {
     return variable_get($variable, $default);
   }
   return FALSE;
+}
+
+/**
+ * Helper function to generate absolute URLs without language prefixes.
+ *
+ * @param string $path
+ *   The path, as accepted by url().
+ * @param array $options_in
+ *   Options, as accepted by url(). 'absolute' and 'language' will be
+ *   overridden.
+ *
+ * @return string
+ *   The absolute URL without language prefixes.
+ */
+function islandora_cwrc_writer_get_absolute_url($path, $options_in = array()) {
+  static $no_language = NULL;
+  if ($no_language === NULL) {
+    $no_language = new stdClass();
+    $no_language->language = LANGUAGE_NONE;
+  }
+
+  return url($path, array(
+    'absolute' => TRUE,
+    'language' => $no_language,
+  ) + $options_in);
 }

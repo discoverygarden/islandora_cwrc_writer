@@ -184,7 +184,7 @@ function islandora_cwrc_writer_theme($existing, $type, $theme, $path) {
     'islandora_cwrc_writer_embedded' => array(
       'file' => 'theme/theme.inc',
       'variables' => array(
-        'src' => url('cwrc/editor'),
+        'src' => islandora_cwrc_writer_get_absolute_url('cwrc/editor'),
         'width' => '100%',
         'height' => '800px',
       ),
