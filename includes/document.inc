@@ -148,7 +148,7 @@ function islandora_cwrc_writer_style_document(AbstractDatastream $datastream, Ab
   }
 
   // Get the schema object. If there's a problem, bail.
-  $schema_pid = $object->relationships->get('http://cwrc.ca/ns/cw#', 'hasSchema');
+  $schema_pid = $object->relationships->get(CWRC_RELS_EXT_URI, 'hasSchema');
   $schema_pid = reset($schema_pid);
   if ($schema_pid) {
     $schema_object = islandora_object_load($schema_pid['object']['value']);
