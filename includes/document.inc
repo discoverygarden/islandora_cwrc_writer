@@ -167,7 +167,7 @@ function islandora_cwrc_writer_style_document(AbstractDatastream $datastream, Ab
     $accessibles = islandora_cwrc_writer_get_rng_css_accessibility($schema_object);
     if ($accessibles) {
       // Get and possibly modify the original content.
-      if ($datastream->controlGroup == 'X' || 'M') {
+      if ($datastream->controlGroup == 'X' || $datastream->controlGroup == 'M') {
         global $base_url;
         $cwrc = $datastream->content;
         module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
