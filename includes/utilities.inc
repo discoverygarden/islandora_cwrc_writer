@@ -969,10 +969,12 @@ function islandora_cwrc_writer_create_domdocument() {
  *
  * @return array
  *   An array of associative arrays where each represents a single schema.
+ *   - pid: The PID of the schema object.
  *   - name: The label / name of the schema.
  *   - url: An absolute URL to the RNG schema file.
  *   - cssUrl: An absolute URL to the CSS file.
  *   - schemaMappingsId: Indicates what mapping to use in the CWRC-Writer.
+ *   - aliases: An array containing the non-URL-encoded URL to the RNG.
  */
 function islandora_cwrc_writer_get_schemas() {
   global $base_url;
@@ -993,20 +995,39 @@ EOT;
   $results = $connection->repository->ri->sparqlQuery($query);
   $schemas = array();
   foreach ($results as $result) {
-    $pid = $result['pid']['value'];
-    $schema = array(
-      'pid' => $pid,
-      'name' => $result['label']['value'],
-      'schemaMappingsId' => $result['mapping']['value'],
-      'url' => islandora_cwrc_writer_get_absolute_url("islandora/object/{$pid}/datastream/SCHEMA/view"),
-      'cssUrl' => islandora_cwrc_writer_get_absolute_url("islandora/object/{$pid}/datastream/CSS/view"),
-      'aliases' => array(
-        // XXX: Generate an alias to match the old concatenated structure
-        // (without URL-encoding).
-        "$base_url/islandora/object/$pid/datastream/SCHEMA/view",
-      ),
-    );
-    $schemas[$pid] = $schema;
+    $schema_object = islandora_object_load($result['pid']['value']);
+    if ($schema_object) {
+      // We shouldn't add schemas without CSS or SCHEMA datastreams; this could
+      // confuse CWRC-Writer.
+      if (!isset($schema_object['SCHEMA']) || !isset($schema_object['CSS'])) {
+        continue;
+      }
+      // Base info.
+      $schema = array(
+        'pid' => $schema_object->id,
+        'name' => $result['label']['value'],
+        'schemaMappingsId' => $result['mapping']['value'],
+      );
+      // Determine where to set the RNG URL from.
+      if ($schema_object['SCHEMA']->controlGroup == 'X' || $schema_object['SCHEMA']->controlGroup == 'M') {
+        $schema['url'] = islandora_cwrc_writer_get_absolute_url("islandora/object/{$schema_object->id}/datastream/SCHEMA/view");
+        $schema['aliases'] = array(
+          // XXX: Generate an alias to match the old concatenated structure
+          // (without URL-encoding).
+          "$base_url/islandora/object/{$schema_object->id}/datastream/SCHEMA/view",
+        );
+      }
+      else {
+        $schema['url'] = $schema_object['SCHEMA']->url;
+        $schema['aliases'] = array($schema_object['SCHEMA']->url);
+      }
+      // Do the same for the CSS URL.
+      $schema['cssUrl'] = ($schema_object['CSS']->controlGroup == 'X' || $schema_object['CSS']->controlGroup == 'M') ?
+        islandora_cwrc_writer_get_absolute_url("islandora/object/{$schema_object->id}/datastream/CSS/view") :
+        $schema_object['CSS']->url;
+      // Add it to the list.
+      $schemas[$schema_object->id] = $schema;
+    }
   }
   return $schemas;
 }
