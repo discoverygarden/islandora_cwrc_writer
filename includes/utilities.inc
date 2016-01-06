@@ -998,7 +998,7 @@ EOT;
     $schema_object = islandora_object_load($result['pid']['value']);
     if ($schema_object) {
       // We shouldn't add schemas without CSS or SCHEMA datastreams; this could
-      // bork up some shiz.
+      // confuse CWRC-Writer.
       if (!isset($schema_object['SCHEMA']) || !isset($schema_object['CSS'])) {
         continue;
       }
