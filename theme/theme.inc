@@ -58,6 +58,7 @@ function template_preprocess_islandora_cwrc_writer(array &$variables) {
     array_unshift($variables['header'], $navigation_widget);
   }
   $variables['settings']['documents'] = $variables['documents'];
+  $variables['settings']['schemaId'] = $variables['schema'];
   _template_preprocess_islandora_cwrc_writer_schema_settings($variables);
   islandora_cwrc_flag_recorded_resources();
 }
