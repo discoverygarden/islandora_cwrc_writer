@@ -46,7 +46,7 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
   return array(
     'label' => array(
       '#title' => t('Title'),
-      '#description' => t('Please give a unique title for this schema.'),
+      '#description' => t('A unique title for this schema.'),
       '#type' => 'textfield',
       '#required' => TRUE,
       '#element_validate' => array('islandora_cwrc_writer_schema_upload_form_validate_label'),
@@ -64,7 +64,7 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
     'managed' => array(
       '#title' => t('Managed'),
       '#type' => 'fieldset',
-      '#description' => t('A managed schema is useful in that it provides a stronger guarantee that it will be available also any changes to it can be tracked and managed over time within the repository.'),
+      '#description' => t('A managed schema is useful in that it provides a stronger guarantee that it will be available; also, any changes to it can be tracked and managed over time within the repository.'),
       'rng_file' => array(
         // This is a hack to get around that pluploader doesn't
         // display #required.
@@ -73,7 +73,7 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
         // End hack.
         '#title' => t('RNG File'),
         '#type' => 'managed_file',
-        '#description' => t('Select file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $rng_extensions[0])),
+        '#description' => t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $rng_extensions[0])),
         '#default_value' => isset($form_state['values']['rng_file']) ? $form_state['values']['rng_file'] : NULL,
         '#upload_location' => 'public://',
         '#upload_validators' => array(
@@ -90,7 +90,7 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
         // End hack.
         '#title' => t('CSS File'),
         '#type' => 'managed_file',
-        '#description' => t('Select file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $css_extensions[0])),
+        '#description' => t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $css_extensions[0])),
         '#default_value' => isset($form_state['values']['rng_file']) ? $form_state['values']['rng_file'] : NULL,
         '#upload_location' => 'public://',
         '#upload_validators' => array(
@@ -108,10 +108,10 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
     'external' => array(
       '#title' => t('External'),
       '#type' => 'fieldset',
-      '#description' => t('A external schema is useful in that it can be shared amoung many objects and you only need to change the file in one location to change them all.'),
+      '#description' => t('An external schema is useful in that it can be shared among many objects, and changes to the file at the external location will be shared by all of them.'),
       'rng_url' => array(
         '#title' => t('RNG URL'),
-        '#description' => t('Please provied a resolvable URL to a valid RNG file.'),
+        '#description' => t('A resolvable URL to a valid RNG file.'),
         '#type' => 'textfield',
         '#required' => FALSE,
         '#size' => 120,
@@ -122,7 +122,7 @@ function islandora_cwrc_writer_schema_upload_form(array $form, array &$form_stat
       ),
       'css_url' => array(
         '#title' => t('CSS URL'),
-        '#description' => t('Please provied a resolvable URL to a valid RNG file.'),
+        '#description' => t('A resolvable URL to a valid CSS file.'),
         '#type' => 'textfield',
         '#required' => FALSE,
         '#size' => 120,

@@ -216,6 +216,39 @@ function cwrcWriterInit($, Writer, Delegator) {
             type: 'error'
         });
     };
+
+    /**
+     * Override this so we can pass a schemaId to loadDocument.
+     */
+    writer.fileManager.loadInitialDocument = function(start, schemaId) {
+      start = start.substr(1);
+      if (start === 'load') {
+        writer.dialogManager.filemanager.showLoader();
+      } else if (start.match(/^templates\//) !== null) {
+        start += '.xml';
+        writer.fileManager.loadTemplate(start);
+      } else if (start !== '') {
+        writer.fileManager.loadDocument(start, schemaId);
+      } else if (writer.initialConfig.defaultDocument) {
+        writer.fileManager.loadInitialDocument('#'+writer.initialConfig.defaultDocument);
+      }
+    };
+
+    /**
+     * Override this so we can pass a schemaId to processDocument.
+     */
+    writer.fileManager.loadDocument = function(docName, schemaId) {
+      writer.currentDocId = docName;
+      writer.event('loadingDocument').publish();
+      writer.delegator.loadDocument(docName, function(xml) {
+        if (xml != null) {
+          writer.converter.processDocument(xml, schemaId);
+        } else {
+          writer.currentDocId = null;
+        }
+      });
+    };
+
   // Replace the baseUrl after object construction since it's hard-coded.
   writer.baseUrl = config.baseUrl;
   // Hold onto a reference for safe keeping.
@@ -320,7 +353,7 @@ function cwrcWriterInit($, Writer, Delegator) {
           window.location.hash = (window.location.hash !== "") ? window.location.hash : config.documents[0];
         }
         if (window.location.hash) {
-          writer.fileManager.loadInitialDocument(window.location.hash);
+          writer.fileManager.loadInitialDocument(window.location.hash, config.schemaId);
         }
       });
   });
