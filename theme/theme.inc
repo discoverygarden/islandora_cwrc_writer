@@ -414,8 +414,6 @@ function _template_preprocess_islandora_cwrc_writer_schema_settings(array &$vari
   if (!isset($variables['settings']['schemas'])) {
     $variables['settings']['schemas'] = array();
   }
-  // Combine the provided schemas with ones discovered in the RI.
-  $variables['settings']['schemas'] = array_merge_recursive($variables['settings']['schemas'], islandora_cwrc_writer_get_schemas());
   // Get the PIDs of the default schemas.
   $config = islandora_cwrc_writer_default_config();
   $pids = array();
@@ -423,8 +421,6 @@ function _template_preprocess_islandora_cwrc_writer_schema_settings(array &$vari
     $pid = $schema['pid'];
     $pids[$pid] = TRUE;
   }
-  // Remove duplicate references to the default schemas.
-  $variables['settings']['schemas'] = array_diff_key($variables['settings']['schemas'], $pids);
   // Remove duplicate references to the non default schemas.
   $variables['settings']['schemas'] = array_unique($variables['settings']['schemas'], SORT_REGULAR);
 }
