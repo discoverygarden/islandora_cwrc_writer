@@ -190,7 +190,7 @@ function islandora_cwrc_writer_default_config() {
       // index of (tei, events, biography, writing) as the CWRC-Writer is
       // hardcoded to expect these schema's to be present. Dialog boxes will
       // break if they do not have these indexes.
-      'tei' => array(
+      'cwrc:teiSchema' => array(
         'pid' => 'cwrc:teiSchema',
         'name' => 'CWRC Basic TEI Schema',
         'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:teiSchema/datastream/SCHEMA/view'),
@@ -204,7 +204,7 @@ function islandora_cwrc_writer_default_config() {
         ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_TEI,
       ),
-      'events' => array(
+      'cwrc:eventsSchema' => array(
         'pid' => 'cwrc:eventsSchema',
         'name' => 'CWRC Events Schema',
         'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:eventsSchema/datastream/SCHEMA/view'),
@@ -217,7 +217,7 @@ function islandora_cwrc_writer_default_config() {
         ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
-      'biography' => array(
+      'cwrc:biographySchema' => array(
         'pid' => 'cwrc:biographySchema',
         'name' => 'CWRC Biography Schema',
         'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:biographySchema/datastream/SCHEMA/view'),
@@ -230,7 +230,7 @@ function islandora_cwrc_writer_default_config() {
         ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
-      'writing' => array(
+      'cwrc:writingSchema' => array(
         'pid' => 'cwrc:writingSchema',
         'name' => 'CWRC Writing Schema',
         'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:writingSchema/datastream/SCHEMA/view'),
@@ -243,7 +243,7 @@ function islandora_cwrc_writer_default_config() {
         ),
         'schemaMappingsId' => ISLANDORA_CWRC_WRITER_SCHEMA_MAPPING_ORLANDO,
       ),
-      'entry' => array(
+      'cwrc:entrySchema' => array(
         'pid' => 'cwrc:entrySchema',
         'name' => 'CWRC Entry Schema',
         'url' => islandora_cwrc_writer_get_absolute_url('islandora/object/cwrc:entrySchema/datastream/SCHEMA/view'),
