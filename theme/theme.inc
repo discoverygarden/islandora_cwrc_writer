@@ -411,11 +411,5 @@ function template_process_islandora_cwrc_writer_text_image_link_dialog(array &$v
  */
 function _template_preprocess_islandora_cwrc_writer_schema_settings(array &$variables) {
   module_load_include('inc', 'islandora_cwrc_writer', 'includes/utilities');
-  if (!isset($variables['settings']['schemas'])) {
-    $variables['settings']['schemas'] = array();
-  }
-
-  $variables['settings']['schemas'] = array_merge_recursive($variables['settings']['schemas'], islandora_cwrc_writer_get_schemas());
-  // Remove duplicate references.
-  $variables['settings']['schemas'] = array_unique($variables['settings']['schemas'], SORT_REGULAR);
+  $variables['settings']['schemas'] = islandora_cwrc_writer_get_schemas();
 }
