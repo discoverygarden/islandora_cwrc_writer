@@ -345,12 +345,13 @@ function cwrcWriterInit($, Writer, Delegator) {
           if ($('option:selected', $select).is('option:first-child')) {
             $('li.prev a', $navigation).addClass('disabled');
           }
-          // Force resize, as it's needed when the layout is done in an iframe as
-          // it expects.
+          // Force resize, as it's needed when the layout is done in an iframe
+          // as it expects.
           setTimeout(writer.layout.resizeAll, 500);
         });
         if (config.documents.length) {
-          window.location.hash = (window.location.hash !== "") ? window.location.hash : config.documents[0];
+          // Overlay can completely mangle the hash, so we can't rely on it.
+          window.location.hash = writer.currentDocId ? writer.currentDocId : config.documents[0];
         }
         if (window.location.hash) {
           writer.fileManager.loadInitialDocument(window.location.hash, config.schemaId);
