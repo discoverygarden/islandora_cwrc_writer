@@ -266,6 +266,7 @@ function islandora_cwrc_writer_libraries_info() {
           'js/cwrcDialogs/css/datepicker.css' => $default_css_properties,
           'js/lib/fonts/font-awesome/css/font-awesome.min.css' => $default_css_properties,
           'js/cwrcDialogs/css/cD.css' => $default_css_properties,
+          'css/cwrcstyle/jquery-ui.css' => $default_css_properties,
         ),
       ),
     ),
