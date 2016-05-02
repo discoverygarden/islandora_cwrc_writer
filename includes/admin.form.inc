@@ -100,6 +100,12 @@ function islandora_cwrc_writer_admin_settings_form(array $form, array &$form_sta
         ),
         '#default_value' => variable_get('islandora_cwrc_writer_viaf_url', 'viaf'),
       ),
+      'islandora_cwrc_writer_repository_base_object_url' => array(
+        '#type' => 'textfield',
+        '#title' => t('Repository Base Object URL'),
+        '#description' => t('Used to denote the URL used as the base for the repository. Left empty this will default to the base root. Note a trailing slash is needed if not using the default.'),
+        '#default_value' => variable_get('islandora_cwrc_writer_repository_base_object_url', ''),
+      ),
     ),
   ));
 }
