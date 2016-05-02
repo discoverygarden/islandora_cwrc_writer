@@ -182,6 +182,7 @@ function islandora_cwrc_writer_default_config() {
         'organization' => 'http://cwrc.ca/schemas/entities.rng',
         'place' => 'http://cwrc.ca/schemas/entities.rng',
       ),
+      'repositoryBaseObjectUrl' => islandora_cwrc_writer_get_absolute_url(variable_get('islandora_cwrc_writer_repository_base_object_url', '')),
     ),
     // This associative array of schema documents requires the PID of the schema
     // object to be used as each entries key.
