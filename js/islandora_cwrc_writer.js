@@ -181,7 +181,7 @@ function cwrcWriterInit($, Writer, Delegator) {
                       window.location = Drupal.settings.basePath+'islandora/object/'+writer.currentDocId
                   },
                   error: function() {
-                      writer.delegator.displayError(xhr, docId);
+                      writer.delegator.displayError(xhr, writer.currentDocId);
                   }
               })
           },
