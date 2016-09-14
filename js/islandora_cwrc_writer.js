@@ -326,7 +326,7 @@ function cwrcWriterInit($, Writer, Delegator) {
           }
           else if (config.initial_mode == 'read') {
             writer.isAnnotator = false;
-            writer.layout.close('west');
+            writer.layout.open('west');
             writer.hideToolbar();
             writer.editor.plugins.cwrc_contextmenu.disabled = true;
           }
