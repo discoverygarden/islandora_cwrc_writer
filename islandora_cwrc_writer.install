@@ -13,21 +13,14 @@ function islandora_cwrc_writer_requirements($phase) {
   $requirements = array(
     'islandora_cwrc_writer' => array('title' => $t('CWRC-Writer Library')),
   );
-  $library = array(
-    'library path' => libraries_get_path('CWRC-Writer'),
-  );
-  $options = array(
-    'file' => 'src/editor_dev.htm',
-    'pattern' => '/CWRC-Writer v([0-9.]+)/',
-    'lines' => 200,
-  );
-  if (file_exists($library['library path'])) {
+  $library = libraries_detect('CWRC-Writer');
+  if ($library['installed']) {
     $requirements['islandora_cwrc_writer']['severity'] = REQUIREMENT_OK;
-    $requirements['islandora_cwrc_writer']['value'] = libraries_get_version($library, $options);
+    $requirements['islandora_cwrc_writer']['value'] = $library['version'];
   }
   else {
     $requirements['islandora_cwrc_writer']['severity'] = REQUIREMENT_ERROR;
-    $requirements['islandora_cwrc_writer']['value'] = $t('Not found');
+    $requirements['islandora_cwrc_writer']['value'] = $library['error'];
     $requirements['islandora_cwrc_writer']['description'] = $t('The <a href="@cwrc">CWRC-Writer Library</a> is missing. <a href="@download">Download</a> and extract it into the <code>@directory</code> directory. Rename the extracted folder to <code>@library-folder</code>.', array(
         '@cwrc' => 'https://github.com/cwrc/CWRC-Writer',
         '@download' => 'https://github.com/cwrc/CWRC-Writer/archive/development.zip',
