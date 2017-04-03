@@ -17,34 +17,36 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
   // Triggers the loading of CWRC-Writer.
   Drupal.behaviors.cwrcWriterLoad = {
     attach: function (context, settings) {
-      // We have to set the height explicitly since the CWRC-Writer assumes it
-      // has the full body.
-      if(!window.frameElement) {
-        $('#cwrc_wrapper').height(1000);
-      }
-      // Set the baseUrl, which will be used to load all the required javascript documents.
-      require.config({
-        baseUrl: settings.CWRCWriter.cwrcRootUrl + 'js',
-      });
+      $("#cwrc_wrapper", context).once('cwrcWriterLoad', function () {
+        // We have to set the height explicitly since the CWRC-Writer assumes it
+        // has the full body.
+        if(!window.frameElement) {
+          $('#cwrc_wrapper').height(1000);
+        }
+        // Set the baseUrl, which will be used to load all the required javascript documents.
+        require.config({
+          baseUrl: settings.CWRCWriter.cwrcRootUrl + 'js',
+        });
 
-      // Load required jQuery in noConflict mode.
-      define('jquery-private', ['jquery'], function ($) {
-        return $.noConflict(true);
-      });
+        // Load required jQuery in noConflict mode.
+        define('jquery-private', ['jquery'], function ($) {
+          return $.noConflict(true);
+        });
 
-      // Get required jQuery and initialize the CWRC-Writer.
-      require(['jquery', 'knockout'], function($, knockout) {
-        window.ko = knockout; // requirejs shim isn't working for knockout
+        // Get required jQuery and initialize the CWRC-Writer.
+        require(['jquery', 'knockout'], function($, knockout) {
+          window.ko = knockout; // requirejs shim isn't working for knockout
 
-        require(['writer',
-                 'delegator',
-                 'jquery.layout',
-                 'jquery.tablayout'
-                ], function(Writer, Delegator) {
-                  $(function() {
-                    cwrcWriterInit.call(window, $, Writer, Delegator);
-                  });
-                });
+          require(['writer',
+            'delegator',
+            'jquery.layout',
+            'jquery.tablayout'
+          ], function(Writer, Delegator) {
+            $(function() {
+              cwrcWriterInit.call(window, $, Writer, Delegator);
+            });
+          });
+        });
       });
    }
   };
@@ -54,8 +56,8 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
   Drupal.behaviors.cwrcWriterDocumentSelect = {
     attach: function (context, settings) {
       $('#islandora-cwrc-document-select', context).once('islandora-cwrc-writer-select-document', function () {
-	var $select = $(this);
-	if (!$select.hasClass('processed')) {
+  var $select = $(this);
+  if (!$select.hasClass('processed')) {
           // Any time this element changes reload the document.
           $select.change(function (e) {
             if (Drupal.CWRCWriter.writer !== undefined) {
@@ -63,7 +65,7 @@ Drupal.CWRCWriter = Drupal.CWRCWriter || {};
             }
           });
           $select.addClass('processed');
-	}
+  }
       });
     }
   };
@@ -324,7 +326,7 @@ function cwrcWriterInit($, Writer, Delegator) {
           }
           else if (config.initial_mode == 'read') {
             writer.isAnnotator = false;
-            writer.layout.close('west');
+            writer.layout.open('west');
             writer.hideToolbar();
             writer.editor.plugins.cwrc_contextmenu.disabled = true;
           }
